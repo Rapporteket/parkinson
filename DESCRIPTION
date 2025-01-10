@@ -1,17 +1,15 @@
-Package: rapRegTemplate
+Package: parkinson
 Type: Package
 Title: Template to be used for Making New Registries at Rapportekt
 Version: 1.2.0
 Authors@R: c(
-    person(given = "Are",
-           family = "Edvardsen",
+    person(given = "Stein-Kato",
+           family = "Lindberg",
            role = c("aut", "cre"),
-           email = "biorakel@gmail.com",
-           comment = c(ORCID = "0000-0002-5210-3656")))
-Maintainer: Are Edvardsen <biorakel@gmail.com>
-Description: Boilerplate R code for making result services for registries at
-  Rapporteket. May be used as templalte for establishin such services or as
-  plain exercise for training purposes.
+           email = "stein-kato.lindberg@helse-nord.no",
+           comment = c(ORCID = "00000-0001-6088-255X")))
+Maintainer: Stein-Kato Lindberg <stein-kato.lindberg@helse-nord.no>
+Description: Rapportek for Norsk Parkinsonregister og biobank
 Depends:
   R (>= 3.5.0)
 Imports:
@@ -26,7 +24,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-URL: http://github.com/Rapporteket/rapRegTemplate
-BugReports: http://github.com/Rapporteket/rapRegTemplate/issues
+URL: http://github.com/Rapporteket/parkinson
+BugReports: http://github.com/Rapporteket/parkinson/issues
 Suggests: 
     testthat

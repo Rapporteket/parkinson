@@ -25,7 +25,7 @@ veiledning_server <- function(id) {
       # Veiledning
       output$veiledning <- shiny::renderUI({
         rapbase::renderRmd(
-          system.file("veiledning.Rmd", package = "rapRegTemplate"),
+          system.file("veiledning.Rmd", package = "parkinson"),
           outputType = "html_fragment"
         )
       })

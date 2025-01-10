@@ -1,4 +1,4 @@
-#' Client (ui) for the rapRegTemplate app
+#' Client (ui) for the parkinson app
 #'
 #' @return An shiny app ui object
 #' @export
@@ -6,7 +6,7 @@
 app_ui <- function() {
 
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
-  regTitle <- "rapRegTemplate"
+  regTitle <- "parkinson"
 
   shiny::tagList(
     shiny::navbarPage(

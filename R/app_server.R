@@ -1,4 +1,4 @@
-#' Server logic for the rapRegTemplate app
+#' Server logic for the parkinson app
 #'
 #' @param input shiny input object
 #' @param output shiny output object
@@ -16,7 +16,7 @@ app_server <- function(input, output, session) {
   )
   output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
   userInfo <-
-    rapbase::howWeDealWithPersonalData(session, callerPkg = "rapRegTemplate")
+    rapbase::howWeDealWithPersonalData(session, callerPkg = "parkinson")
 
   shiny::observeEvent(input$userInfo, {
     shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,

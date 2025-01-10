@@ -15,4 +15,4 @@ RUN --mount=type=secret,id=GITHUB_PAT,env=GITHUB_PAT \
 
 EXPOSE 3838
 
-CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); rapRegTemplate::run_app()"]
+CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); parkinson::run_app()"]

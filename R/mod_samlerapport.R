@@ -49,7 +49,7 @@ samlerapport_server <- function(id) {
       ## vis
       output$samlerapport <- shiny::renderUI({
         rapbase::renderRmd(
-          system.file("samlerapport.Rmd", package = "rapRegTemplate"),
+          system.file("samlerapport.Rmd", package = "parkinson"),
           outputType = "html_fragment",
           params = list(type = "html",
                         var = input$varS,
@@ -60,12 +60,12 @@ samlerapport_server <- function(id) {
       ## last ned
       output$downloadSamlerapport <- shiny::downloadHandler(
         filename = function() {
-          basename(tempfile(pattern = "rapRegTemplateSamlerapport",
+          basename(tempfile(pattern = "parkinsonSamlerapport",
                             fileext = paste0(".", input$formatS)))
         },
         content = function(file) {
           srcFile <-
-            normalizePath(system.file("samlerapport.Rmd", package = "rapRegTemplate"))
+            normalizePath(system.file("samlerapport.Rmd", package = "parkinson"))
           fn <- rapbase::renderRmd(srcFile, outputType = input$formatS,
                                    params = list(type = input$formatS,
                                                  var = input$varS,

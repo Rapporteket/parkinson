@@ -48,7 +48,7 @@ utsending_server <- function(id) {
           dispatchment$email[!dispatchment$email == input$email]
       })
       shiny::observeEvent(input$dispatch, {
-        package <- "rapRegTemplate"
+        package <- "parkinson"
         type <- "dispatchment"
         owner <- rapbase::getUserName(session)
         ownerName <- rapbase::getUserFullName(session)
