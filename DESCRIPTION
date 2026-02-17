@@ -1,0 +1,48 @@
+Package: rapRegTemplate
+Type: Package
+Title: Template to be used for Making New Registries at Rapportekt
+Version: 1.2.0
+Authors@R: c(
+    person(given = "Ingrid",
+           family = "Bondevik",
+           role = c("aut"),
+           email = "ingrid.bondevik@helse-nord.no",
+           comment = c(ORCID = "0000-0002-8564-255X")),
+    person(given = "Are",
+           family = "Edvardsen",
+           role = c("aut"),
+           email = "biorakel@gmail.com",
+           comment = c(ORCID = "0000-0002-5210-3656")),
+    person(given = "Arnfinn Hykkerud",
+           family = "Steindal",
+           role = c("aut", "cre"),
+           email = "arnfinn.steindal@gmail.com",
+           comment = c(ORCID = "0000-0002-4088-7860")))
+Maintainer: Arnfinn Hykkerud Steindal <arnfinn.steindal@gmail.com>
+Description: Boilerplate R code for making result services for registries at
+  Rapporteket. May be used as templalte for establishin such services or as
+  plain exercise for training purposes.
+Depends:
+  R (>= 4.1.0)
+Imports:
+    dplyr,
+    DT,
+    ggplot2,
+    kableExtra,
+    knitr,
+    palmerpenguins,
+    rapbase,
+    rlang,
+    rpivotTable,
+    shiny,
+    shinyalert
+Remotes:
+  Rapporteket/rapbase@main
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.3
+URL: http://github.com/Rapporteket/rapRegTemplate
+BugReports: http://github.com/Rapporteket/rapRegTemplate/issues
+Suggests: 
+    testthat

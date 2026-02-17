@@ -1,0 +1,45 @@
+Markdown for kladding av figurer
+
+Last inn data:
+```{r}
+data(package = "medicaldata")
+data <- medicaldata::licorice_gargle
+```
+
+Last inn bibliotek:
+```{r}
+library(tidyverse)
+```
+
+
+
+Se på dataene
+```{r}
+
+
+data |> 
+  ggplot(aes(x = pacu30min_swallowPain)) +
+  geom_histogram()
+
+```
+
+Filtrere
+```{r}
+# på alder
+# på røyking før operasjon
+
+test <- data |> 
+  filter(between(preOp_age, 25,100))
+
+
+```
+
+```{r}
+
+data$preOp_age
+```
+
+
+
+
+
