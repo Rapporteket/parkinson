@@ -121,7 +121,7 @@ mod_fordeling_plot_server <- function(id, data) {
       data <- forbered_data_fordeling(data)
 
       data_reactive <- shiny::reactive({
-        data <- rapRegTemplate::utvalg_fordeling(
+        data <- utvalg_fordeling(
           data,
           input$alder_var[1],
           input$alder_var[2],
@@ -131,7 +131,7 @@ mod_fordeling_plot_server <- function(id, data) {
 
       tabell_reactive <- shiny::reactive({
         shiny::req(c(input$var_sammenligning))
-        rapRegTemplate::lag_fordeling_tabell(
+        lag_fordeling_tabell(
           data_reactive(),
           input$x_var,
           input$sammenligne_grupper,
@@ -141,7 +141,7 @@ mod_fordeling_plot_server <- function(id, data) {
 
       plot_reactive <- shiny::reactive({
         shiny::req(c(input$var_sammenligning))
-        rapRegTemplate::lag_fordeling_plot(
+        lag_fordeling_plot(
           data_reactive(),
           input$x_var,
           input$sammenligne_grupper,

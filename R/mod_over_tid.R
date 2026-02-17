@@ -71,11 +71,11 @@ mod_over_tid_server <- function(id, data) {
     function(input, output, session) {
 
       data_over_tid_reactive <- shiny::reactive({
-        rapRegTemplate::over_tid_utvalg(data, input$var, input$region)
+        over_tid_utvalg(data, input$var, input$region)
       })
 
       plot_over_tid_reactive <- shiny::reactive({
-        rapRegTemplate::over_tid_plot(data_over_tid_reactive(), input$region)
+        over_tid_plot(data_over_tid_reactive(), input$region)
       })
 
       output$over_tid_plot <- shiny::renderPlot({
