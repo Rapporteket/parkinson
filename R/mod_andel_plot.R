@@ -6,18 +6,44 @@
 
 .private <- new.env(parent = emptyenv())
 .private$andVarChoices <- c(
-  "Tung (>= 4000g)"        = "heavy",
-  "Langt nebb (>= 45mm)"   = "long_bill",
-  "Dype nebb (>= 18mm)"    = "deep_bill",
-  "Lang flipper (>= 200mm)" = "long_flipper",
-  "Hann"                   = "male"
-)
+  "Tatt CT"        = "PS_DIAG_CT",
+  "Tatt MR"        = "PS_DIAG_MR",
+  "Tatt bilde" =  "PS_DIAG_IM",
+  "Tatt PET"       = "PS_DIAG_PET",
+  "Klinkompleks"   = "PS_KLINKOMPEKSPL",
+  "Klinkomp"       = "PS_KLINKOMP",
+  "Skade hode"     = "PS_FALL_SKADE_HODE",
+  "Skade trunkus"  = "PS_FALL_SKADE_TRUNKUS",
+  "Skade ekstremitet" = "PS_FALL_SKADE_EKS",
+  "Ikke motekspl"  = "PS_IKKEMOTEKSPL",
+  "Ikke motekspl ingen" = "PS_IKKEMOTEKSPLIngen",
+  "Autekspl"       = "PS_AUTEKSPL",
+  "Autdysf"        = "PS_AUTDYSF",
+  "Sovnekspl"      = "PS_SOVNEKSPL",
+  "Sovn"           = "PS_SOVN",
+  "Psykekspl"      = "PS_PSYKEKSPL",
+  "Psyk"           = "PS_PSYK",
+  "Systunders"     = "PS_SYSTUNDERS",
+  "Blodbvit"       = "PS_BLODBVIT",
+  "CSF amyl"       = "PS_CSFAMYL",
+  "APO"            = "PS_APO",
+  "DUO"            = "PS_DUO",
+  "DBS"            = "PS_DBS",
+  "Antidep"        = "PS_ANTIDEP",
+  "Antianx"        = "PS_ANTIANX",
+  "Antipsy"        = "PS_ANTIPSY",
+  "Sovemed"        = "PS_SOVEMED",
+  "Analg"          = "PS_ANALG",
+  "Antidem"        = "PS_ANTIDEM",
+  "B12 folat"      = "PS_B12FOL",
+  "Lec"            = "PS_LEC"
+  )
+              
 
 .private$andBinChoices <- c(
-  "Art"    = "species",
-  "Øy"     = "island",
-  "Kjønn"  = "sex",
-  "År"     = "year"
+  "Sykehus"    = "HealthUnitShortName",
+  "Kjønn" = "PatientGender",
+  "RHF" = "RHF"
 )
 
 
