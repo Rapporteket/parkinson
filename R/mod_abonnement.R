@@ -38,7 +38,7 @@ abonnement_server <- function(id, user) {
 
   ## Subscription
   rapbase::autoReportServer(
-    id = id, registryName = "rapRegTemplate",
+    id = id, registryName = "parkinson",
     type = "subscription", reports = reports, orgs = orgs, freq = "quarter", user = user
   )
 }

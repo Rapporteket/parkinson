@@ -89,7 +89,7 @@ mod_andeler_server <- function(id, data) {
           "med mer enn", input$limitS, "registreringer"
         )
 
-        rapRegTemplate::PlotAndelerGrVar(
+        PlotAndelerGrVar(
           RegData = data,
           Variabel = data[[var]],
           grVar = bins,

@@ -32,7 +32,7 @@ services:
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
 
   app:
-    image: rapporteket/rapregtemplate:main
+    image: rapporteket/parkinson:main
     ports:
       - 3838:3838
     environment:
@@ -48,7 +48,7 @@ services:
       - ~/.ssh:/home/rstudio/.ssh
       - ~/.gitconfig:/home/rstudio/.gitconfig
       - ../rapbase/.:/home/rstudio/rapbase
-      - .:/home/rstudio/rapregtemplate
+      - .:/home/rstudio/parkinson
     ports:
       - "8787:8787"
     restart: "no"

@@ -1,4 +1,4 @@
-Package: rapRegTemplate
+Package: parkinson
 Type: Package
 Title: Template to be used for Making New Registries at Rapportekt
 Version: 1.2.0
@@ -42,7 +42,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
-URL: http://github.com/Rapporteket/rapRegTemplate
-BugReports: http://github.com/Rapporteket/rapRegTemplate/issues
+URL: http://github.com/Rapporteket/parkinson
+BugReports: http://github.com/Rapporteket/parkinson/issues
 Suggests: 
     testthat

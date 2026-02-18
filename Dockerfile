@@ -20,4 +20,4 @@ RUN adduser --uid "1000" --disabled-password rapporteket && \
     chmod -R 755 /app/R
 USER rapporteket
 
-CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); rapRegTemplate::run_app()"]
+CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); parkinson::run_app()"]
