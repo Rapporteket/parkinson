@@ -13,14 +13,19 @@
 parkPreprosess <- function(RegData) {
   
 	# Dato formatering
-  RegData[, c("FormDate", "LastUpdate", "FirstTimeClosed", "Dato",
-              "PS_HDATO", "DEB_DATO",
-              "DIAG_DATO", "PS_DIAG_CT_DATO", "PS_DIAG_MR_DATO", "PS_DIAG_DAT_DATO", "PS_DIAG_PET_DATO")] <-
-    dplyr::mutate_all(RegData[, c("FormDate", "LastUpdate", "FirstTimeClosed",
-                                  "Dato", "PS_HDATO",
-                                  "DEB_DATO", "DIAG_DATO",
-                                  "PS_DIAG_CT_DATO", "PS_DIAG_MR_DATO", "PS_DIAG_DAT_DATO", "PS_DIAG_PET_DATO")],
-                      list(~ as.Date(., format="%d.%m.%Y")))
+  date_cols <- c(
+		"FormDate", "LastUpdate", "FirstTimeClosed", "Dato",
+		"PS_HDATO", "DEB_DATO",
+		"DIAG_DATO", "PS_DIAG_CT_DATO", "PS_DIAG_MR_DATO",
+		"PS_DIAG_DAT_DATO", "PS_DIAG_PET_DATO"
+	)
+
+	RegData <- RegData |>
+		dplyr::mutate(
+			dplyr::across(
+				dplyr::all_of(date_cols),
+				to_date_ddmmyyyy8)
+			)
 	
 	RegData$PatientGender <- factor(RegData$PatientGender, levels = c(1, 2), labels = c("Mann", "Kvinne"))
 	
@@ -42,6 +47,10 @@ parkPreprosess <- function(RegData) {
 			)
 		)
 
+	RegData$tattBilde <- RegData$PS_DIAG_CT | RegData$PS_DIAG_MR | RegData$PS_DIAG_DAT | RegData$PS_DIAG_PET
+	attr(RegData, "kvalIndGrenser") <- list(
+		tattBilde = c(0, 75, 90, 100)
+	)
   
 
   return(RegData)

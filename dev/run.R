@@ -31,3 +31,14 @@ con <- DBI::dbConnect(
 con <- DBI::dbDisconnect(con)
 con <- NULL
 
+con_park <- rapbase::rapOpenDbConnection("parkinson")
+RegData <- readr::read_csv2(
+  paste("C:/Users/pli601/repos/parkinson/data-raw/Mockdatasett_Parkinsonregister.csv")
+)
+RegData <- RegData |>
+  dplyr::filter(
+    !dplyr::if_all(dplyr::everything(), ~ is.na(.) | trimws(as.character(.)) == "")
+  )
+RegData <- as.data.frame(RegData)
+DBI::dbWriteTable(con_park$con, "parkinsonMockData", RegData)
+DBI::dbDisconnect(con_park$con)

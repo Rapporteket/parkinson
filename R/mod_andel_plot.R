@@ -8,7 +8,9 @@
 .private$andVarChoices <- c(
   "Tatt CT"        = "PS_DIAG_CT",
   "Tatt MR"        = "PS_DIAG_MR",
-  "Tatt bilde" =  "PS_DIAG_IM",
+  "Tatt bilde"     =  "tattBilde",
+  "Tatt DAT"       = "PS_DIAG_DAT",
+  "Tatt IM"        = "PS_DIAG_IM",
   "Tatt PET"       = "PS_DIAG_PET",
   "Klinkompleks"   = "PS_KLINKOMPEKSPL",
   "Klinkomp"       = "PS_KLINKOMP",
@@ -68,12 +70,15 @@ mod_andeler_ui <- function(id) {
           label = "Sortert etter:",
           choices = .private$andBinChoices
         ),
-        shiny::sliderInput(
-          inputId = ns("limitS"),
-          label = "Inklusjonskriterie (>n):",
-          min = 0,
-          max = 100,
-          value = 1
+        shiny::dateRangeInput(
+          inputId = ns("datoRange"),
+          label = "Velg datoperiode:",
+          start = "2022-01-01",
+          end = Sys.Date(),
+          min = "2015-01-01",
+          max = Sys.Date(),
+          format = "yyyy-mm-dd",
+          language = "no"
         ),
         shiny::downloadButton(
           outputId = ns("downloadandelPlot"),
@@ -102,9 +107,17 @@ mod_andeler_server <- function(id, data) {
 
       plotReactive <- shiny::reactive({
         data <- as.data.frame(data_reactive())
+
+        req(input$datoRange)
+        data <- filtrerDatoIntervall(
+          data = data,
+          datoColNavn = Dato,
+          datoFra = input$datoRange[1],
+          datoTil = input$datoRange[2]
+        )
+
         var <- input$varS
         bins <- input$binsS
-        limit <- input$limitS
 
         var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]
@@ -112,14 +125,14 @@ mod_andeler_server <- function(id, data) {
         tittel <- paste(
           "Andel", var_label,
           "etter", bins_label,
-          "med mer enn", input$limitS, "registreringer"
+          "med mer enn", 10, "registreringer"
         )
 
         PlotAndelerGrVar(
           RegData = data,
           Variabel = data[[var]],
           grVar = bins,
-          Ngrense = limit,
+          Ngrense = 10,
           tittel = tittel,
           kvalIndGrenser = attr(data, "kvalIndGrenser")[[var]],
           bestKvalInd = "høy"
