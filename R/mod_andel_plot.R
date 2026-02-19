@@ -8,10 +8,15 @@
 .private$andVarChoices <- c(
   "Tatt CT"        = "PS_DIAG_CT",
   "Tatt MR"        = "PS_DIAG_MR",
-  "Tatt bilde"     =  "tattBilde",
   "Tatt DAT"       = "PS_DIAG_DAT",
-  "Tatt IM"        = "PS_DIAG_IM",
   "Tatt PET"       = "PS_DIAG_PET",
+  "Tatt bilde"     =  "tattBilde",
+  "Oppdatert behandling" = "oppdatertBehandling",
+  "APO"            = "PS_APO",
+  "DUO"            = "PS_DUO",
+  "DBS"            = "PS_DBS",
+  "Lec"            = "PS_LEC",
+  "Mottatt avansert behandling" = "mottattAvansertBehandling",
   "Klinkompleks"   = "PS_KLINKOMPEKSPL",
   "Klinkomp"       = "PS_KLINKOMP",
   "Skade hode"     = "PS_FALL_SKADE_HODE",
@@ -28,17 +33,13 @@
   "Systunders"     = "PS_SYSTUNDERS",
   "Blodbvit"       = "PS_BLODBVIT",
   "CSF amyl"       = "PS_CSFAMYL",
-  "APO"            = "PS_APO",
-  "DUO"            = "PS_DUO",
-  "DBS"            = "PS_DBS",
   "Antidep"        = "PS_ANTIDEP",
   "Antianx"        = "PS_ANTIANX",
   "Antipsy"        = "PS_ANTIPSY",
   "Sovemed"        = "PS_SOVEMED",
   "Analg"          = "PS_ANALG",
   "Antidem"        = "PS_ANTIDEM",
-  "B12 folat"      = "PS_B12FOL",
-  "Lec"            = "PS_LEC"
+  "B12 folat"      = "PS_B12FOL"
   )
               
 
@@ -107,7 +108,6 @@ mod_andeler_server <- function(id, data) {
 
       plotReactive <- shiny::reactive({
         data <- as.data.frame(data_reactive())
-
         req(input$datoRange)
         data <- filtrerDatoIntervall(
           data = data,

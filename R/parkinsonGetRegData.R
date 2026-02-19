@@ -35,7 +35,8 @@ parkGetRegData <- function(datoFra = '2017-01-01', datoTil = '2099-01-01') {
       paste(boolCols, collapse = ", "), ", ",
       "PatientGender, ",
       "HealthUnitShortName, ",
-      "RHF ",
+      "RHF, ",
+      "ICD_10 ",
       "FROM parkinsonmockdata;"
     )
 
