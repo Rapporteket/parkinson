@@ -16,6 +16,7 @@
   "DUO"            = "PS_DUO",
   "DBS"            = "PS_DBS",
   "Lec"            = "PS_LEC",
+  "Standarsisert kartlegging" = "StandardisertKartlegging",
   "Mottatt avansert behandling" = "mottattAvansertBehandling",
   "Klinkompleks"   = "PS_KLINKOMPEKSPL",
   "Klinkomp"       = "PS_KLINKOMP",

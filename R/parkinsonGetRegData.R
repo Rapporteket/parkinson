@@ -36,7 +36,9 @@ parkGetRegData <- function(datoFra = '2017-01-01', datoTil = '2099-01-01') {
       "PatientGender, ",
       "HealthUnitShortName, ",
       "RHF, ",
-      "ICD_10 ",
+      "ICD_10, ",
+      "PatientAge, ",
+      "PS_HY ",
       "FROM parkinsonmockdata;"
     )
 

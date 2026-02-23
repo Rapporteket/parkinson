@@ -32,7 +32,8 @@ parkPreprosess <- function(RegData) {
 	# -------- Slutt Dato formatering -------------
 
 	RegData$PatientGender <- factor(RegData$PatientGender, levels = c(0, 1, 2), labels = c("Ukjent", "Mann", "Kvinne"))
-	
+	RegData <- RegData |>
+		dplyr::mutate(PatientAge = as.numeric(PatientAge))
 	boolPattern <- "SANN|USANN"
 
 	boolCols <- names(RegData)[
@@ -50,7 +51,9 @@ parkPreprosess <- function(RegData) {
 				)
 			)
 		)
-
+	RegData <- RegData |>
+		dplyr::mutate(StandardisertKartlegging = PS_HY != -1) # må legge til MDS-UPDRS-III
+	
 
 	#------- Kaviltetsindikatorer -------
 	# Hvis en form for bilde er tatt, så settes tattBilde til 1, ellers 0
@@ -69,7 +72,8 @@ parkPreprosess <- function(RegData) {
 	attr(RegData, "kvalIndGrenser") <- list(
 		tattBilde = c(0, 75, 90, 100),
 		oppdatertBehandling = c(0, 75, 90, 100),
-		mottattAvansertBehandling = c(0, 5, 15, 100)
+		mottattAvansertBehandling = c(0, 5, 15, 100),
+		StandardisertKartlegging = c(0, 75, 90, 100)
 	)
 	#-------------------Slutt Kvalitetsindikatorer -------------------
 
