@@ -17,6 +17,7 @@ parkGetRegData <- function(datoFra = "1999-01-01", datoTil = "2099-01-01") {
         AvdRESH;
       "
     rapbase::loadRegData(registryName, query)
+    # nocov end
   } else {
     Bakgrunnskjema <- rapbase::loadRegData("data", "SELECT * FROM Bakgrunnskjema;")
     Behandlingskjema <- rapbase::loadRegData("data", "SELECT * FROM Behandlingskjema;")
