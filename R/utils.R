@@ -47,14 +47,14 @@ to_date_ddmmyyyy8 <- function(x) {
 
 
 tidsDiffDager <- function(start, slutt) {
-	diffDager <- slutt - start
-	diffDager
+  diffDager <- slutt - start
+  diffDager
 }
 
 filtrerAlderIntervall <- function(data, minAlder = 0, maksAlder = 130) {
   data |>
     dplyr::filter(
-      (is.null(minAlder) | PatientAge >= minAlder) &
-      (is.null(maksAlder) | PatientAge <= maksAlder)
+      (is.null(minAlder) | .data$PatientAge >= minAlder) &
+        (is.null(maksAlder) | .data$PatientAge <= maksAlder)
     )
 }

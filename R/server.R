@@ -23,7 +23,6 @@ app_server <- function(input, output, session) {
 
   meslinger_data <- getFakeRegData()
   parkData <- parkGetRegData()
-  data_licorice_gargle <- licorice_gargle
 
   info_server("info", user = user)
   samlerapport_server("samlerapport")

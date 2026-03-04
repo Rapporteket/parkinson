@@ -59,7 +59,7 @@ mod_fordeling_plot_server <- function(id, data) {
         )
       })
 
-      
+
 
       plot_reactive <- shiny::reactive({
         shiny::req(c(input$x_var))

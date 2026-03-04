@@ -19,11 +19,11 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
       names_to = "medicine",
       values_to = "used"
     ) |>
-    dplyr::filter(used == TRUE) |>
+    dplyr::filter(.data$used == TRUE) |>
     ggplot2::ggplot(
       ggplot2::aes(
         x = !!rlang::sym(fordelingsVariabel),
-        fill = medicine
+        fill = .data$medicine
       )
     ) +
     ggplot2::geom_bar(position = "fill") +

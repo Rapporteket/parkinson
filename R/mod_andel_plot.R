@@ -41,14 +41,22 @@
   "Analg"          = "PS_ANALG",
   "Antidem"        = "PS_ANTIDEM",
   "B12 folat"      = "PS_B12FOL"
-  )
-              
+)
+
 
 .private$andBinChoices <- c(
   "Sykehus"    = "HealthUnitShortName",
   "Kjønn" = "PatientGender",
   "RHF" = "RHF"
 )
+
+.private$datoColmMap <- c(
+  "PS_DIAG_CT"    = "PS_DIAG_CT_DATO",
+  "PS_DIAG_MR"    = "PS_DIAG_MR_DATO",
+  "PS_DIAG_DAT"   = "PS_DIAG_DAT_DATO",
+  "PS_DIAG_PET"   = "PS_DIAG_PET_DATO"
+)
+
 
 
 mod_andeler_ui <- function(id) {
@@ -77,7 +85,7 @@ mod_andeler_ui <- function(id) {
           label = "Velg datoperiode:",
           start = "2022-01-01",
           end = Sys.Date(),
-          min = "2015-01-01",
+          min = "1990-01-01",
           max = Sys.Date(),
           format = "yyyy-mm-dd",
           language = "no"
@@ -107,18 +115,20 @@ mod_andeler_server <- function(id, data) {
         data
       })
 
+
+
       plotReactive <- shiny::reactive({
         data <- as.data.frame(data_reactive())
+        var <- input$varS
+        bins <- input$binsS
         req(input$datoRange)
+
         data <- filtrerDatoIntervall(
           data = data,
-          datoColNavn = Dato,
+          datoColNavn = "Dato",
           datoFra = input$datoRange[1],
           datoTil = input$datoRange[2]
         )
-
-        var <- input$varS
-        bins <- input$binsS
 
         var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]

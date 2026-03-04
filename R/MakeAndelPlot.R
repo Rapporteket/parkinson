@@ -139,7 +139,7 @@ PlotAndelerGrVar <- function(RegData,
     )
 
     # 4) Dynamisk øvre grense på prosentaksen
-    maksAndel <- min(max(ggDataFrame$andelProsent, gjennomsnittY*1.15, na.rm = TRUE) * 1.15, 100)
+    maksAndel <- min(max(ggDataFrame$andelProsent, gjennomsnittY * 1.15, na.rm = TRUE) * 1.15, 100)
     if (maksAndel == 0) {
       maksAndel <- 5
     }
