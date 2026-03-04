@@ -121,7 +121,7 @@ mod_andeler_server <- function(id, data) {
         data <- as.data.frame(data_reactive())
         var <- input$varS
         bins <- input$binsS
-        req(input$datoRange)
+        shiny::req(input$datoRange)
 
         data <- filtrerDatoIntervall(
           data = data,
