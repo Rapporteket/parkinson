@@ -139,10 +139,13 @@ PlotAndelerGrVar <- function(RegData,
     )
 
     # 4) Dynamisk øvre grense på prosentaksen
-    maksAndel <- min(max(ggDataFrame$andelProsent, na.rm = TRUE) * 1.15, 100)
+    maksAndel <- min(max(ggDataFrame$andelProsent, gjennomsnittY * 1.15, na.rm = TRUE) * 1.15, 100)
+    if (maksAndel == 0) {
+      maksAndel <- 5
+    }
     prettyVals <- pretty(c(0, maksAndel), n = nTicks) # Funksjon som finner "pent" fordelte verdier for aksen
     # Sørg for at både maks andel og gjennomsnittslinje får plass
-    ovreGrense <- max(prettyVals, gjennomsnittY, na.rm = TRUE)
+    ovreGrense <- max(prettyVals, na.rm = TRUE)
 
     # 5) Kvalitetsindikator: Bakgrunnsbånd basert på kvalitetsgrenser
     visKvalIndGrenser <- any(kvalIndGrenser > 0, na.rm = TRUE)
@@ -254,7 +257,7 @@ PlotAndelerGrVar <- function(RegData,
       ggplot2::theme_minimal() +
       ggplot2::theme(
         panel.grid = ggplot2::element_blank(),
-        plot.margin = ggplot2::margin(r = 30),
+        plot.margin = ggplot2::margin(r = 50),
         axis.ticks.x = ggplot2::element_line(color = "black"),
         axis.line.x  = ggplot2::element_line(color = "black"),
         axis.line.y  = ggplot2::element_line(color = "black"),

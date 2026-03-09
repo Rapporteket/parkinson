@@ -7,21 +7,20 @@
 PlotAndelerGrVar(
   RegData,
   Variabel,
-  bins = "ShNavn",
-  hovedgrTxt = "",
-  KvalIndGrenser = NA,
+  grVar = "ShNavn",
+  hovedgrTxt = "Total andel",
+  kvalIndGrenser = NA,
   tittel = "tittel",
   utvalgTxt = "",
   Ngrense = 10,
+  bestKvalInd = "lav",
+  fargepalett = "BlaaOff",
+  grtxt = "",
   titleSize = 20,
   subtitleSize = 15,
   legendSize = 12,
-  axisTextSize = 10,
-  bestKvalInd = "lav",
-  nTicks = 5,
-  fargepalett = "BlaaOff",
-  grtxt = "",
-  outfile = ""
+  axisTextSize = 12,
+  nTicks = 5
 )
 }
 \arguments{
@@ -31,11 +30,11 @@ PlotAndelerGrVar(
 A plot object visualizing the group-specific proportions or distributions.
 }
 \description{
-This function generates a plot for group-specific proportions or distributions 
+This function generates a plot for group-specific proportions or distributions
              based on the provided registry data.
 }
 \details{
-This function is designed to work with registry data and create visualizations 
-         that highlight group-specific metrics. The exact details of the plot depend on 
+This function is designed to work with registry data and create visualizations
+         that highlight group-specific metrics. The exact details of the plot depend on
          the structure of the input data and the specific implementation of the function.
 }

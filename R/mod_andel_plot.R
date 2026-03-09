@@ -1,25 +1,63 @@
+
+
+.private <- new.env(parent = emptyenv())
+.private$andVarChoices <- c(
+  "Tatt CT"        = "PS_DIAG_CT",
+  "Tatt MR"        = "PS_DIAG_MR",
+  "Tatt DAT"       = "PS_DIAG_DAT",
+  "Tatt PET"       = "PS_DIAG_PET",
+  "Tatt bilde"     =  "tattBilde",
+  "Oppdatert behandling" = "oppdatertBehandling",
+  "APO"            = "PS_APO",
+  "DUO"            = "PS_DUO",
+  "DBS"            = "PS_DBS",
+  "Lec"            = "PS_LEC",
+  "Standarsisert kartlegging" = "StandardisertKartlegging",
+  "Mottatt avansert behandling" = "mottattAvansertBehandling",
+  "Klinkompleks"   = "PS_KLINKOMPEKSPL",
+  "Klinkomp"       = "PS_KLINKOMP",
+  "Skade hode"     = "PS_FALL_SKADE_HODE",
+  "Skade trunkus"  = "PS_FALL_SKADE_TRUNKUS",
+  "Skade ekstremitet" = "PS_FALL_SKADE_EKS",
+  "Ikke motekspl"  = "PS_IKKEMOTEKSPL",
+  "Ikke motekspl ingen" = "PS_IKKEMOTEKSPLIngen",
+  "Autekspl"       = "PS_AUTEKSPL",
+  "Autdysf"        = "PS_AUTDYSF",
+  "Sovnekspl"      = "PS_SOVNEKSPL",
+  "Sovn"           = "PS_SOVN",
+  "Psykekspl"      = "PS_PSYKEKSPL",
+  "Psyk"           = "PS_PSYK",
+  "Systunders"     = "PS_SYSTUNDERS",
+  "Blodbvit"       = "PS_BLODBVIT",
+  "CSF amyl"       = "PS_CSFAMYL",
+  "Antidep"        = "PS_ANTIDEP",
+  "Antianx"        = "PS_ANTIANX",
+  "Antipsy"        = "PS_ANTIPSY",
+  "Sovemed"        = "PS_SOVEMED",
+  "Analg"          = "PS_ANALG",
+  "Antidem"        = "PS_ANTIDEM",
+  "B12 folat"      = "PS_B12FOL"
+)
+
+
+.private$andBinChoices <- c(
+  "Sykehus"    = "HealthUnitShortName",
+  "Kjønn" = "PatientGender",
+  "RHF" = "RHF"
+)
+
+.private$datoColmMap <- c(
+  "PS_DIAG_CT"    = "PS_DIAG_CT_DATO",
+  "PS_DIAG_MR"    = "PS_DIAG_MR_DATO",
+  "PS_DIAG_DAT"   = "PS_DIAG_DAT_DATO",
+  "PS_DIAG_PET"   = "PS_DIAG_PET_DATO"
+)
+
 #' Shiny module providing GUI and server logic for the Andeler tab
 #'
 #' @param id Character string module namespace
 #' @return An shiny app ui object
 #' @export
-
-.private <- new.env(parent = emptyenv())
-.private$andVarChoices <- c(
-  "Tung (>= 4000g)"        = "heavy",
-  "Langt nebb (>= 45mm)"   = "long_bill",
-  "Dype nebb (>= 18mm)"    = "deep_bill",
-  "Lang flipper (>= 200mm)" = "long_flipper",
-  "Hann"                   = "male"
-)
-
-.private$andBinChoices <- c(
-  "Art"    = "species",
-  "Øy"     = "island",
-  "Kjønn"  = "sex",
-  "År"     = "year"
-)
-
 
 mod_andeler_ui <- function(id) {
   ns <- shiny::NS(id)
@@ -42,12 +80,15 @@ mod_andeler_ui <- function(id) {
           label = "Sortert etter:",
           choices = .private$andBinChoices
         ),
-        shiny::sliderInput(
-          inputId = ns("limitS"),
-          label = "Inklusjonskriterie (>n):",
-          min = 0,
-          max = 100,
-          value = 1
+        shiny::dateRangeInput(
+          inputId = ns("datoRange"),
+          label = "Velg datoperiode:",
+          start = "2022-01-01",
+          end = Sys.Date(),
+          min = "1990-01-01",
+          max = Sys.Date(),
+          format = "yyyy-mm-dd",
+          language = "no"
         ),
         shiny::downloadButton(
           outputId = ns("downloadandelPlot"),
@@ -74,11 +115,20 @@ mod_andeler_server <- function(id, data) {
         data
       })
 
+
+
       plotReactive <- shiny::reactive({
         data <- as.data.frame(data_reactive())
         var <- input$varS
         bins <- input$binsS
-        limit <- input$limitS
+        shiny::req(input$datoRange)
+
+        data <- filtrerDatoIntervall(
+          data = data,
+          datoColNavn = "Dato",
+          datoFra = input$datoRange[1],
+          datoTil = input$datoRange[2]
+        )
 
         var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]
@@ -86,14 +136,14 @@ mod_andeler_server <- function(id, data) {
         tittel <- paste(
           "Andel", var_label,
           "etter", bins_label,
-          "med mer enn", input$limitS, "registreringer"
+          "med mer enn", 10, "registreringer"
         )
 
         PlotAndelerGrVar(
           RegData = data,
           Variabel = data[[var]],
           grVar = bins,
-          Ngrense = limit,
+          Ngrense = 10,
           tittel = tittel,
           kvalIndGrenser = attr(data, "kvalIndGrenser")[[var]],
           bestKvalInd = "høy"

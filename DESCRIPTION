@@ -26,12 +26,15 @@ Depends:
   R (>= 4.1.0)
 Imports:
     dplyr,
+    DBI,
     DT,
     ggplot2,
     kableExtra,
     knitr,
+    lubridate,
     palmerpenguins,
     rapbase,
+    readr,
     rlang,
     rpivotTable,
     shiny,

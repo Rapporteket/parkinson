@@ -13,7 +13,7 @@ Sys.setenv(FALK_APP_ID = "80")
 
 Sys.setenv(MYSQL_DB_LOG = "db_log")
 Sys.setenv(MYSQL_DB_AUTOREPORT = "db_autoreport")
-Sys.setenv(MYSQL_DB_DATA = "deformitet")
+Sys.setenv(MYSQL_DB_DATA = "parkinson")
 Sys.setenv(MYSQL_HOST = "localhost")
 Sys.setenv(MYSQL_USER = "root")
 Sys.setenv(MYSQL_PASSWORD = "root")
