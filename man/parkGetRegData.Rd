@@ -4,7 +4,7 @@
 \alias{parkGetRegData}
 \title{Provides a dataframe containing data from a registry}
 \usage{
-parkGetRegData(datoFra = "2017-01-01", datoTil = "2099-01-01")
+parkGetRegData(datoFra = "1999-01-01", datoTil = "2099-01-01")
 }
 \value{
 regData data frame

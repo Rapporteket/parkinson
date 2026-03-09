@@ -4,7 +4,7 @@
 \alias{plotMedFordeling}
 \title{Preprosessering}
 \usage{
-plotMedFordeling(data, fordelingsvariabel, filter_verdi = NULL)
+plotMedFordeling(data, fordelingsVariabel)
 }
 \arguments{
 \item{data}{datasett "licorice gargle"}

@@ -17,3 +17,4 @@ docs/
 *.sas7bdat
 *.rds
 *.RData
+*.zip
