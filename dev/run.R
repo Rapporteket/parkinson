@@ -33,7 +33,7 @@ con <- NULL
 
 con_park <- rapbase::rapOpenDbConnection("parkinson")
 RegData <- readr::read_csv2(
-  paste("C:/Users/pli601/repos/parkinson/data-raw/Mockdatasett_Parkinsonregister.csv"), col_types = readr::cols(.default = readr::col_character()),
+  paste("C:/Users/pli601/repos/parkinson_datadump/Mockdatasett_Parkinsonregister.csv"), col_types = readr::cols(.default = readr::col_character()),
         trim_ws = TRUE, n_max = 700
 
 )
@@ -50,4 +50,5 @@ DBI::dbWriteTable(con_park$con, "Behandlingskjema", RegDataList$Behandlingskjema
 DBI::dbWriteTable(con_park$con, "Konsultasjonskjema", RegDataList$Konsultasjonskjema, overwrite = TRUE)
 
 DBI::dbDisconnect(con_park$con)
+
 

@@ -41,7 +41,7 @@
 
 
 .private$andBinChoices <- c(
-  "Sykehus"    = "HealthUnitShortName",
+  "Sykehus"    = "HealthUnitName",
   "Kjønn" = "PatientGender",
   "RHF" = "RHF"
 )
