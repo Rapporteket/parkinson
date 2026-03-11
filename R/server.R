@@ -22,14 +22,14 @@ app_server <- function(input, output, session) {
   )
 
   meslinger_data <- getFakeRegData()
-  parkData <- parkGetRegData()
+  RegData <- parkGetRegData()
 
-  info_server("info", user = user)
+  info_server("info", user = user, data = RegData)
   samlerapport_server("samlerapport")
   pivot_server("pivot", user = user)
-  mod_fordeling_plot_server("fordeling", data = parkData)
+  mod_fordeling_plot_server("fordeling", data = RegData)
   mod_over_tid_server("over_tid", data = meslinger_data)
-  mod_andeler_server("andeler", data = parkData)
+  mod_andeler_server("andeler", data = RegData)
 
   #################
   # Subscriptions #

@@ -13,7 +13,8 @@ info_ui <- function(id) {
     shiny::uiOutput(ns("user_info"), inline = TRUE),
     shiny::hr(),
     shiny::h2("Rendering av Rmarkdown-fil"),
-    shiny::uiOutput(ns("info"), inline = TRUE)
+    shiny::uiOutput(ns("info"), inline = TRUE),
+    plotly::plotlyOutput(ns("info_plot"))
   )
 }
 
@@ -21,7 +22,7 @@ info_ui <- function(id) {
 #' @return A shiny app server object
 #' @export
 
-info_server <- function(id, user) {
+info_server <- function(id, user, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -63,8 +64,43 @@ info_server <- function(id, user) {
       output$info <- shiny::renderUI({
         rapbase::renderRmd(
           system.file("info.Rmd", package = "parkinson"),
-          outputType = "html_fragment"
+          outputType = "html_fragment",
+          params = list(data = data)
         )
+      })
+      output$info_plot <- plotly::renderPlotly({
+        dataMonthly <- data |>
+          dplyr::select(.data$FormDate, .data$RHF) |>
+          dplyr::filter(.data$FormDate >= lubridate::today() - lubridate::years(1)) |>
+          dplyr::mutate(month = lubridate::floor_date(.data$FormDate, "month")) |>
+          dplyr::count(.data$month, .data$RHF)
+
+        p <- ggplot2::ggplot() +
+          ggplot2::geom_col(
+            data = dataMonthly,
+            ggplot2::aes(x = .data$month, y = .data$n, fill = .data$RHF)
+          ) +
+          ggplot2::scale_fill_manual(
+            values = c(
+              "#c6dbef",
+              "#6baed6",
+              "#4292c6",
+              "#2171b5",
+              "#084594",
+              "#000059"
+            )
+          ) +
+          ggplot2::labs(fill = "RHF") +
+          ggplot2::theme_minimal() +
+          ggplot2::theme(
+            panel.grid = ggplot2::element_blank(),
+            axis.title = ggplot2::element_blank(),
+            panel.background = ggplot2::element_blank(),
+            plot.background = ggplot2::element_blank()
+          )
+
+        plotly::ggplotly(p, tooltip = c("y", "fill")) |>
+          plotly::config(displayModeBar = FALSE)
       })
     }
   )

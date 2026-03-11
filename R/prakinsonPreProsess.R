@@ -35,7 +35,6 @@ parkPreprosess <- function(RegData) {
   RegData <- RegData |>
     dplyr::mutate(PatientAge = as.numeric(.data$PatientAge))
 
-  
   RegData <- RegData |>
     dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
 
@@ -54,14 +53,20 @@ parkPreprosess <- function(RegData) {
     )
   )
   # Definer kvalitetsindikatorgrenser
-  kvalIndDf <- jsonlite::fromJSON("https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind") |>
-  dplyr::select(ind_id, level_green, level_yellow, level_direction) |>
-  dplyr::mutate(ind_id = dplyr::recode(ind_id,
-    "parkinson_bildedia" = "bilde",
-    "parkinson_eprom" = "eprom",
-    "parkinson_syst_und" = "sysUnd"
+  # nolint start
+  kvalIndDf <- jsonlite::fromJSON( 
+    "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
+  ) |>
+    dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>
+    dplyr::mutate(
+      ind_id = dplyr::recode(
+        .data$ind_id,
+        "parkinson_bildedia" = "bilde",
+        "parkinson_eprom" = "eprom",
+        "parkinson_syst_und" = "sysUnd"
+      )
     )
-  )
+  # nolint end
 
   attr(RegData, "kvalIndGrenser") <- list(
     tattBilde = c(0, 75, 90, 100),
