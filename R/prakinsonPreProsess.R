@@ -44,8 +44,8 @@ parkPreprosess <- function(RegData) {
   RegData$tattBilde <- RegData$PS_DIAG_CT | RegData$PS_DIAG_MR | RegData$PS_DIAG_DAT | RegData$PS_DIAG_PET
 
   # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
-  RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2) # MÅ ENDRES TIL 2 FOR EKTE DATA
-
+  RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
+  
   # Mottatt avansert behandling
   RegData <- RegData |> dplyr::mutate(
     mottattAvansertBehandling = dplyr::if_else(
