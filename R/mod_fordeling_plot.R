@@ -126,7 +126,7 @@ mod_fordeling_plot_server <- function(id, data) {
       })
 
       plot_reactive_alder <- shiny::reactive({
-        req(input$diagnose_var, input$age_var)
+        shiny::req(input$diagnose_var, input$age_var)
         makeAgeDistributionPlot(
           data_reactive(),
           input$age_var,
