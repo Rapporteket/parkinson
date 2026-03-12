@@ -32,8 +32,22 @@ parkPreprosess <- function(RegData) {
   # -------- Slutt Dato formatering -------------
 
   RegData$PatientGender <- factor(RegData$PatientGender, levels = c(0, 1, 2), labels = c("Ukjent", "Mann", "Kvinne"))
+
   RegData <- RegData |>
-    dplyr::mutate(PatientAge = as.numeric(.data$PatientAge))
+    dplyr::mutate(alive = is.na(.data$DeathDate))
+  RegData <- RegData |>
+    dplyr::mutate(
+      deathAge = .data$PatientAge +
+        base::floor(
+          lubridate::time_length(
+            lubridate::interval(.data$FormDate, .data$DeathDate),
+            unit = "years"
+          )
+        )
+    )
+
+  RegData <- RegData |>
+    dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238"))
 
   RegData <- RegData |>
     dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
@@ -49,7 +63,8 @@ parkPreprosess <- function(RegData) {
   # Mottatt avansert behandling
   RegData <- RegData |> dplyr::mutate(
     mottattAvansertBehandling = dplyr::if_else(
-      RegData$ICD_10 == "G20", RegData$PS_APO | RegData$PS_DUO | RegData$PS_DBS | RegData$PS_LEC, NA
+      RegData$ICD_10 == "G20", RegData$PS_APO | RegData$PS_PRO |
+        RegData$PS_DUO | RegData$PS_DBS | RegData$PS_LEC, NA
     )
   )
   # Definer kvalitetsindikatorgrenser

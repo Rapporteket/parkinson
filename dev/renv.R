@@ -19,6 +19,7 @@ Sys.setenv(MYSQL_USER = "root")
 Sys.setenv(MYSQL_PASSWORD = "root")
 
 Sys.setenv(SHINYPROXY_USERNAME = "rapporteket")
+Sys.setenv(SHINYPROXY_APPID = "parkinson")
 Sys.setenv(FALK_USER_FULLNAME = "Rapp O. R. Teket")
 Sys.setenv(FALK_USER_EMAIL = "rapporteket@skde.no")
 Sys.setenv(FALK_USER_PHONE = "+4747474747")
