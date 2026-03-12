@@ -45,7 +45,7 @@ parkPreprosess <- function(RegData) {
 
   # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
   RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
-  
+
   # Mottatt avansert behandling
   RegData <- RegData |> dplyr::mutate(
     mottattAvansertBehandling = dplyr::if_else(
@@ -54,7 +54,7 @@ parkPreprosess <- function(RegData) {
   )
   # Definer kvalitetsindikatorgrenser
   # nolint start
-  kvalIndDf <- jsonlite::fromJSON( 
+  kvalIndDf <- jsonlite::fromJSON(
     "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
   ) |>
     dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>

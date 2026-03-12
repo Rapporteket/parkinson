@@ -86,12 +86,13 @@ over_tid_plot <- function(data, valg_region) {
     ggplot2::ylab("") +
     ggplot2::xlab("År") +
     ggplot2::theme_bw() +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
-                   legend.position = "right",
-                   legend.title = ggplot2::element_blank(),
-                   panel.grid.major = ggplot2::element_blank(),
-                   axis.text.y = ggplot2::element_text(size = 12),
-                   axis.title.x = ggplot2::element_text(size = 14)
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+      legend.position = "right",
+      legend.title = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_text(size = 12),
+      axis.title.x = ggplot2::element_text(size = 14)
     )
 
   return(tid_plot)
