@@ -4,7 +4,7 @@
 \alias{info_server}
 \title{Server logic}
 \usage{
-info_server(id, user)
+info_server(id, user, data)
 }
 \value{
 A shiny app server object

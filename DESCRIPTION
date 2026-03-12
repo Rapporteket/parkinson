@@ -32,7 +32,7 @@ Imports:
     kableExtra,
     knitr,
     lubridate,
-    palmerpenguins,
+    plotly,
     rapbase,
     readr,
     rlang,

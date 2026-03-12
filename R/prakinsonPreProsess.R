@@ -35,33 +35,6 @@ parkPreprosess <- function(RegData) {
   RegData <- RegData |>
     dplyr::mutate(PatientAge = as.numeric(.data$PatientAge))
 
-  boolPattern <- "SANN|USANN"
-
-  boolCols <- {
-    names(RegData)[
-      vapply(
-        RegData,
-        function(x) {
-          any(
-            grepl(boolPattern, as.character(x), ignore.case = TRUE),
-            na.rm = TRUE
-          )
-        },
-        logical(1)
-      )
-    ]
-  }
-  RegData <- RegData |>
-    dplyr::mutate(
-      dplyr::across(
-        dplyr::all_of(boolCols),
-        ~ dplyr::case_when(
-          . == "USANN" ~ 0,
-          . == "SANN" ~ 1,
-          TRUE ~ NA_real_
-        )
-      )
-    )
   RegData <- RegData |>
     dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
 
@@ -71,7 +44,7 @@ parkPreprosess <- function(RegData) {
   RegData$tattBilde <- RegData$PS_DIAG_CT | RegData$PS_DIAG_MR | RegData$PS_DIAG_DAT | RegData$PS_DIAG_PET
 
   # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
-  RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(4) # MÅ ENDRES TIL 2 FOR EKTE DATA
+  RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
 
   # Mottatt avansert behandling
   RegData <- RegData |> dplyr::mutate(
@@ -80,6 +53,21 @@ parkPreprosess <- function(RegData) {
     )
   )
   # Definer kvalitetsindikatorgrenser
+  # nolint start
+  kvalIndDf <- jsonlite::fromJSON(
+    "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
+  ) |>
+    dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>
+    dplyr::mutate(
+      ind_id = dplyr::recode(
+        .data$ind_id,
+        "parkinson_bildedia" = "bilde",
+        "parkinson_eprom" = "eprom",
+        "parkinson_syst_und" = "sysUnd"
+      )
+    )
+  # nolint end
+
   attr(RegData, "kvalIndGrenser") <- list(
     tattBilde = c(0, 75, 90, 100),
     oppdatertBehandling = c(0, 75, 90, 100),
@@ -87,8 +75,6 @@ parkPreprosess <- function(RegData) {
     StandardisertKartlegging = c(0, 75, 90, 100)
   )
   #-------------------Slutt Kvalitetsindikatorer -------------------
-
-
 
   return(RegData)
 }

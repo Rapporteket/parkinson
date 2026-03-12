@@ -5,32 +5,39 @@
 
 parkGetRegData <- function(datoFra = "1999-01-01", datoTil = "2099-01-01") {
 
-  registryName <- "data"
   if (rapbase::isRapContext()) {
-    # nocov start
-    query <- "
-      SELECT
-        AvdRESH AS Avdeling,
-        COUNT(*) AS n
-      FROM
-        parkinson_skjema
-        AvdRESH;
-      "
-    rapbase::loadRegData(registryName, query)
-    # nocov end
-  } else {
-    Bakgrunnskjema <- rapbase::loadRegData("data", "SELECT * FROM Bakgrunnskjema;")
-    Behandlingskjema <- rapbase::loadRegData("data", "SELECT * FROM Behandlingskjema;")
-    Konsultasjonskjema <- rapbase::loadRegData("data", "SELECT * FROM Konsultasjonskjema;")
-
-    RegData <- rbind(
-      Bakgrunnskjema,
-      Behandlingskjema,
-      Konsultasjonskjema
+    bakgrunnSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM bakgrunnskjema_1"
     )
-
-    RegData <- parkPreprosess(RegData)
+    # nolint start
+    behandlingSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM behandlingskjema_3 LIMIT 2000"
+    )
+    konsultasjonSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM konsultasjonskjema_2 LIMIT 2000"
+    )
+    ePromSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM egenrapport_4 LIMIT 2000"
+    )
+    # nolint end
+  } else {
+    bakgrunnSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM bakgrunnskjema_1"
+    )
+    # nolint start
+    behandlingSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM behandlingskjema_3 LIMIT 2000"
+    )
+    konsultasjonSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM konsultasjonskjema_2 LIMIT 2000"
+    )
+    ePromSkjema <- rapbase::loadRegData(
+      query = "SELECT * FROM egenrapport_4 LIMIT 2000"
+    )
+    # nolint end
   }
+
+  RegData <- parkPreprosess(bakgrunnSkjema)
 
 
   return(RegData)

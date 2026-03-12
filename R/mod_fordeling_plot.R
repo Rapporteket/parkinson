@@ -16,10 +16,10 @@ mod_fordeling_plot_ui <- function(id) {
           inputId = ns("x_var"),
           label = "Variabel:",
           choices = c(
-            "Sykehus" = "HealthUnitShortName",
+            "Sykehus" = "HealthUnitName",
             "Region"  = "RHF"
           ),
-          selected = "HealthUnitShortName"
+          selected = "HealthUnitName"
         ),
 
         shiny::sliderInput(
