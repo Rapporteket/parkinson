@@ -21,14 +21,13 @@ app_server <- function(input, output, session) {
     caller = "parkinson"
   )
 
-  meslinger_data <- getFakeRegData()
   RegData <- parkGetRegData()
 
   info_server("info", user = user, data = RegData)
   samlerapport_server("samlerapport")
-  pivot_server("pivot", user = user)
+  pivot_server(RegData, "pivot", user = user)
   mod_fordeling_plot_server("fordeling", data = RegData)
-  mod_over_tid_server("over_tid", data = meslinger_data)
+  mod_over_tid_server("over_tid", data = RegData)
   mod_andeler_server("andeler", data = RegData)
 
   #################
