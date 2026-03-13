@@ -24,7 +24,7 @@ pivot_ui <- function(id) {
 #'
 #' @return Server logic for the pivot module
 #' @export
-pivot_server <- function(id, user) {
+pivot_server <- function(data, id, user) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -34,7 +34,7 @@ pivot_server <- function(id, user) {
       shiny::observeEvent(user$role(), {
         message("user role changed. It's now: ", user$role())
         if ((user$role() %in% c("LC", "SC"))) {
-          regData(getFakeRegData())
+          regData(data)
         } else {
           regData(data.frame())
         }
