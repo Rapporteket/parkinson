@@ -42,13 +42,4 @@ dt <- mtcars[1:6, ][params$var]
 cap <- paste("Eksempeltabell som viser variabelen", params$var, "fra mtcars.")
 
 rapbase::mst(tab = dt, type = params$type, cap = cap)
-
-```
-
-
-## Eksempel på figur
-Samlerapporter kan også inneholde figurer basert på data slik som vist i Figur \@ref(fig:eksFig).
-
-```{r eksFig, echo=FALSE, out.width="80%", fig.cap=paste("Eksempelfigur som viser frekvensfordelingen av", params$var, "fra mtcars.")}
-f <- makeSimpleHist(df = mtcars, var = params$var, bins = params$bins, makeTable = FALSE)
 ```
