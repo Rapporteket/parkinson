@@ -13,36 +13,91 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
 
   medKolonner <- c("PS_APO", "PS_DUO", "PS_DBS", "PS_LEC", "PS_PRO")
 
-  data |>
+  medNavn <- c(
+    PS_APO = "Apomorfin",
+    PS_DUO = "Duodopa",
+    PS_DBS = "DBS",
+    PS_LEC = "LEC",
+    PS_PRO = "Produodopa"
+  )
+
+  colors <- c(
+    Apomorfin = "#c6dbef",
+    Duodopa = "#6baed6",
+    DBS = "#4292c6",
+    LEC = "#2171b5",
+    Produodopa = "#084594"
+  )
+
+  data_long <- data |>
     tidyr::pivot_longer(
       cols = dplyr::all_of(medKolonner),
       names_to = "medicine",
       values_to = "used"
     ) |>
     dplyr::filter(.data$used == TRUE) |>
-    ggplot2::ggplot(
-      ggplot2::aes(
-        x = !!rlang::sym(fordelingsVariabel),
-        fill = .data$medicine
+    dplyr::mutate(
+      group = as.character(.data[[fordelingsVariabel]]),
+      medicine = factor(
+        .data$medicine,
+        levels = names(medNavn),
+        labels = unname(medNavn)
       )
+    )
+
+  total_row <- data_long |>
+    dplyr::mutate(group = "Hele landet")
+
+  data_plot <- dplyr::bind_rows(data_long, total_row) |>
+    dplyr::count(.data$group, .data$medicine, name = "n") |>
+    dplyr::group_by(.data$group) |>
+    dplyr::mutate(
+      prop = .data$n / sum(.data$n),
+      tooltip = paste0(
+        "<br>", .data$medicine,
+        "<br>Antall: ", .data$n,
+        "<br>Andel: ", scales::percent(.data$prop, accuracy = 0.1)
+      )
+    ) |>
+    dplyr::ungroup()
+
+  ggplot2::ggplot(
+    data_plot,
+    ggplot2::aes(
+      x = .data$group,
+      y = .data$prop,
+      fill = .data$medicine,
+      text = .data$tooltip
+    )
+  ) +
+    ggplot2::geom_col(
+      width = 0.9
     ) +
-    ggplot2::geom_bar(position = "fill") +
     ggplot2::coord_flip() +
-    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::scale_y_continuous(
+      labels = scales::percent
+    ) +
+    ggplot2::scale_fill_manual(
+      values = colors,
+      drop = FALSE
+    ) +
     ggplot2::labs(
-      title = paste("Fordeling av medisinsk bruk etter", fordelingsVariabel),
-      x = fordelingsVariabel,
       y = "Andel av total medisinsk bruk",
-      fill = "Medisin"
+      fill = "Medisin:"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
+      panel.grid = ggplot2::element_blank(),
+      axis.line.x = ggplot2::element_line(colour = "black"),
+      axis.text = ggplot2::element_text(size = 11),
+      axis.title.x = ggplot2::element_text(size = 11),
+      axis.title.y = ggplot2::element_blank(),
       legend.position = "top",
-      legend.title = ggplot2::element_text(face = "bold"),
-      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
+      legend.title = ggplot2::element_blank(),
+      plot.title = ggplot2::element_blank(),
       plot.margin = ggplot2::margin(
         t = 15,
-        r = 20,
+        r = 70,
         b = 15,
         l = 20
       )

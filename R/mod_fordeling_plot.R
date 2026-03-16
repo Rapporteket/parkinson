@@ -10,7 +10,7 @@ mod_fordeling_plot_ui <- function(id) {
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        width = 4,
+        width = 3,
         shiny::conditionalPanel(
           condition = "input.tab == 'Meds'",
           ns = ns,
@@ -29,8 +29,8 @@ mod_fordeling_plot_ui <- function(id) {
             inputId = ns("alder_var"),
             label = "Aldersintervall:",
             min = 0,
-            max = 100,
-            value = c(10, 100),
+            max = 110,
+            value = c(0, 110),
             dragRange = TRUE
           )
         ),
@@ -64,7 +64,11 @@ mod_fordeling_plot_ui <- function(id) {
           shiny::tabPanel(
             "Medisiner",
             value = "Meds",
-            shiny::plotOutput(outputId = ns("fordeling_plot_meds")),
+            shiny::h3("Fordeling i bruk av medisiner og behandling"),
+            plotly::plotlyOutput(
+              outputId = ns("fordeling_plot_meds"),
+              height = "500px"
+            ),
             shiny::downloadButton(
               outputId = ns("nedlastning_fordeling_plot_meds"),
               label = "Last ned figur"
@@ -73,7 +77,7 @@ mod_fordeling_plot_ui <- function(id) {
           shiny::tabPanel(
             "Alder",
             value = "Age",
-            shiny::h3("Aldersfordeling for levende pasienter"),
+            shiny::h3("Aldersfordeling for pasienter"),
             plotly::plotlyOutput(
               outputId = ns("fordeling_plot_alder"),
               height = "800px"
@@ -98,8 +102,11 @@ mod_fordeling_plot_server <- function(id, data) {
     id,
     function(input, output, session) {
       data_reactive <- shiny::reactive({
+        plotData <- data |>
+          dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
+
         if (input$tab == "Meds") {
-          plotData <- data |>
+          plotData <- plotData |>
             dplyr::filter(.data$alive == TRUE) |>
             filtrerAlderIntervall(
               input$alder_var[1],
@@ -107,7 +114,7 @@ mod_fordeling_plot_server <- function(id, data) {
             )
         } else if (input$tab == "Age") {
           shiny::req(input$diagnose_var, input$age_var)
-          plotData <- data |>
+          plotData <- plotData |>
             dplyr::filter(
               .data$atypiskDiag == input$diagnose_var,
               .data$alive == (input$age_var != "deathAge")
@@ -134,13 +141,21 @@ mod_fordeling_plot_server <- function(id, data) {
         )
       })
 
-      output$fordeling_plot_meds <- shiny::renderPlot({
-        plot_reactive_meds()
+      output$fordeling_plot_meds <- plotly::renderPlotly({
+        plot_reactive_meds() |>
+          plotly::ggplotly(tooltip = "text") |>
+          plotly::config(displayModeBar = FALSE) |>
+          plotly::layout(
+            legend = list(
+              itemclick = FALSE,
+              itemdoubleclick = FALSE
+            )
+          )
       })
 
       output$fordeling_plot_alder <- plotly::renderPlotly({
-        p <- plot_reactive_alder()
-        plotly::ggplotly(p, tooltip = "text") |>
+        plot_reactive_alder() |>
+          plotly::ggplotly(tooltip = "text") |>
           plotly::config(displayModeBar = FALSE)
       })
 
