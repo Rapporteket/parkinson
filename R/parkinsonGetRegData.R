@@ -17,7 +17,7 @@ parkGetRegData <- function(datoFra = "1999-01-01", datoTil = "2099-01-01") {
       query = "SELECT * FROM konsultasjonskjema_2 LIMIT 2000"
     )
     ePromSkjema <- rapbase::loadRegData(
-      query = "SELECT * FROM egenrapport_4 LIMIT 2000"
+      query = "SELECT * FROM egenrapport_4"
     )
     # nolint end
   } else {
@@ -32,13 +32,11 @@ parkGetRegData <- function(datoFra = "1999-01-01", datoTil = "2099-01-01") {
       query = "SELECT * FROM konsultasjonskjema_2 LIMIT 2000"
     )
     ePromSkjema <- rapbase::loadRegData(
-      query = "SELECT * FROM egenrapport_4 LIMIT 2000"
+      query = "SELECT * FROM egenrapport_4"
     )
     # nolint end
   }
+  data <- parkPreprosess(bakgrunnSkjema, ePromSkjema)
 
-  RegData <- parkPreprosess(bakgrunnSkjema)
-
-
-  return(RegData)
+  return(data)
 }

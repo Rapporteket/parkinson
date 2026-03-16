@@ -14,29 +14,7 @@
   "Lec"            = "PS_LEC",
   "Standarsisert kartlegging" = "StandardisertKartlegging",
   "Mottatt avansert behandling" = "mottattAvansertBehandling",
-  "Klinkompleks"   = "PS_KLINKOMPEKSPL",
-  "Klinkomp"       = "PS_KLINKOMP",
-  "Skade hode"     = "PS_FALL_SKADE_HODE",
-  "Skade trunkus"  = "PS_FALL_SKADE_TRUNKUS",
-  "Skade ekstremitet" = "PS_FALL_SKADE_EKS",
-  "Ikke motekspl"  = "PS_IKKEMOTEKSPL",
-  "Ikke motekspl ingen" = "PS_IKKEMOTEKSPLIngen",
-  "Autekspl"       = "PS_AUTEKSPL",
-  "Autdysf"        = "PS_AUTDYSF",
-  "Sovnekspl"      = "PS_SOVNEKSPL",
-  "Sovn"           = "PS_SOVN",
-  "Psykekspl"      = "PS_PSYKEKSPL",
-  "Psyk"           = "PS_PSYK",
-  "Systunders"     = "PS_SYSTUNDERS",
-  "Blodbvit"       = "PS_BLODBVIT",
-  "CSF amyl"       = "PS_CSFAMYL",
-  "Antidep"        = "PS_ANTIDEP",
-  "Antianx"        = "PS_ANTIANX",
-  "Antipsy"        = "PS_ANTIPSY",
-  "Sovemed"        = "PS_SOVEMED",
-  "Analg"          = "PS_ANALG",
-  "Antidem"        = "PS_ANTIDEM",
-  "B12 folat"      = "PS_B12FOL"
+  "Fornøyd med tilbud fra spesialhelsetjenesten" = "tilfredsSpesialist"
 )
 
 
@@ -90,6 +68,11 @@ mod_andeler_ui <- function(id) {
           format = "yyyy-mm-dd",
           language = "no"
         ),
+        shiny::selectInput(
+          inputId = ns("bildeformatAndel"),
+          label = "Velg format for nedlasting av figur",
+          choices = c("pdf", "png", "jpg", "bmp", "tif", "svg")
+        ),
         shiny::downloadButton(
           outputId = ns("downloadandelPlot"),
           label = "Last ned!"
@@ -106,26 +89,33 @@ mod_andeler_ui <- function(id) {
 #' @return A Shiny app server object
 #' @export
 
-mod_andeler_server <- function(id, data) {
+mod_andeler_server <- function(id, inputData) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
 
       data_reactive <- shiny::reactive({
-        data
+        inputData$RegData
+      })
+      e_prom_reactive <- shiny::reactive({
+        inputData$promData
       })
 
 
 
       plotReactive <- shiny::reactive({
-        data <- as.data.frame(data_reactive())
+        shiny::req(input$datoRange, input$varS, input$binsS)
         var <- input$varS
         bins <- input$binsS
-        shiny::req(input$datoRange)
+        if (var == "tilfredsSpesialist") {
+          data <- as.data.frame(e_prom_reactive())
+        } else {
+          data <- as.data.frame(data_reactive())
+        }
 
         data <- filtrerDatoIntervall(
           data = data,
-          datoColNavn = "Dato",
+          datoColNavn = "FormDate",
           datoFra = input$datoRange[1],
           datoTil = input$datoRange[2]
         )
@@ -154,18 +144,26 @@ mod_andeler_server <- function(id, data) {
         plotReactive()
       })
 
-      output$downloadandelPlot <-  shiny::downloadHandler(
+      output$downloadandelPlot <- shiny::downloadHandler(
         filename = function() {
-          paste("plot_andeler", Sys.Date(), ".pdf", sep = "")
+          format <- shiny::req(input$bildeformatAndel)
+          paste0("plot_andeler_", Sys.Date(), ".", format)
         },
         content = function(file) {
-          pdf(file, onefile = TRUE, width = 15, height = 9)
-          plot(plotReactive())
-          dev.off()
+          format <- shiny::req(input$bildeformatAndel)
+          p <- shiny::req(plotReactive())
+
+          ggplot2::ggsave(
+            filename = file,
+            plot = p,
+            device = format,
+            width = 15,
+            height = 9,
+            units = "in",
+            dpi = 150
+          )
         }
       )
-
-
     }
   )
 }

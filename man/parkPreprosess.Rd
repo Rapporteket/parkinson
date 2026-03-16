@@ -4,7 +4,7 @@
 \alias{parkPreprosess}
 \title{Parkinson's Disease Preprocessing}
 \usage{
-parkPreprosess(RegData)
+parkPreprosess(RegData, promData)
 }
 \arguments{
 \item{RegData}{Data frame containing the registry data}

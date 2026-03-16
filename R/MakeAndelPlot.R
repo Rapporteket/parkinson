@@ -257,7 +257,7 @@ PlotAndelerGrVar <- function(RegData,
       ggplot2::theme_minimal() +
       ggplot2::theme(
         panel.grid = ggplot2::element_blank(),
-        plot.margin = ggplot2::margin(r = 50),
+        plot.margin = ggplot2::margin(r = 50, l = 20, t = 15, b = 15),
         axis.ticks.x = ggplot2::element_line(color = "black"),
         axis.line.x  = ggplot2::element_line(color = "black"),
         axis.line.y  = ggplot2::element_line(color = "black"),
