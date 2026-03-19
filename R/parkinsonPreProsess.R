@@ -10,8 +10,10 @@
 #'
 
 
-parkPreprosess <- function(RegData) {
-
+parkPreprosess <- function(RegData, promData) {
+  #-----------------------------------------------#
+  #              Bakgunnskjema                    #
+  #-----------------------------------------------#
   # -------------- Dato formatering -------------
   date_cols <- c(
     "FormDate", "LastUpdate", "FirstTimeClosed", "Dato",
@@ -47,7 +49,7 @@ parkPreprosess <- function(RegData) {
     )
 
   RegData <- RegData |>
-    dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238"))
+    dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238", "G239"))
 
   RegData <- RegData |>
     dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
@@ -61,26 +63,28 @@ parkPreprosess <- function(RegData) {
   RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
 
   # Mottatt avansert behandling
-  RegData <- RegData |> dplyr::mutate(
-    mottattAvansertBehandling = dplyr::if_else(
-      RegData$ICD_10 == "G20", RegData$PS_APO | RegData$PS_PRO |
-        RegData$PS_DUO | RegData$PS_DBS | RegData$PS_LEC, NA
-    )
-  )
-  # Definer kvalitetsindikatorgrenser
-  # nolint start
-  kvalIndDf <- jsonlite::fromJSON(
-    "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
-  ) |>
-    dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>
+  RegData <- RegData |>
     dplyr::mutate(
-      ind_id = dplyr::recode(
-        .data$ind_id,
-        "parkinson_bildedia" = "bilde",
-        "parkinson_eprom" = "eprom",
-        "parkinson_syst_und" = "sysUnd"
+      mottattAvansertBehandling = dplyr::if_else(
+        .data$ICD_10 == "G20",
+        .data$PS_APO | .data$PS_PRO | .data$PS_DUO | .data$PS_DBS | .data$PS_LEC,
+        NA
       )
     )
+  # Definer kvalitetsindikatorgrenser
+  # nolint start
+  # kvalIndDf <- jsonlite::fromJSON(
+  #   "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
+  # ) |>
+  #   dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>
+  #   dplyr::mutate(
+  #     ind_id = dplyr::recode(
+  #       .data$ind_id,
+  #       "parkinson_bildedia" = "bilde",
+  #       "parkinson_eprom" = "eprom",
+  #       "parkinson_syst_und" = "sysUnd"
+  #     )
+  #   )
   # nolint end
 
   attr(RegData, "kvalIndGrenser") <- list(
@@ -91,5 +95,24 @@ parkPreprosess <- function(RegData) {
   )
   #-------------------Slutt Kvalitetsindikatorer -------------------
 
-  return(RegData)
+
+  #----------------------------------------------#
+  #             ePromSkjema                      #
+  #----------------------------------------------#
+  promData <- promData |>
+    dplyr::mutate(
+      tilfredsSpesialist = dplyr::if_else(
+        .data$DHT_TILFREDS_SPESIALIST %in% 0:4,
+        .data$DHT_TILFREDS_SPESIALIST %in% c(3, 4),
+        NA
+      )
+    )
+  attr(promData, "kvalIndGrenser") <- list(
+    tilfredsSpesialist = c(0, 40, 60, 100)
+  )
+
+  return(list(
+    RegData = RegData,
+    promData = promData
+  ))
 }

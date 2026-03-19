@@ -4,7 +4,7 @@
 \alias{mod_andeler_server}
 \title{Server logic for andel plot}
 \usage{
-mod_andeler_server(id, data)
+mod_andeler_server(id, inputData)
 }
 \arguments{
 \item{id}{Character string module namespace}
