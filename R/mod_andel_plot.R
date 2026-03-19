@@ -103,6 +103,8 @@ mod_andeler_ui <- function(id) {
 }
 
 #' Server logic for andel plot
+#' @param id Character string module namespace
+#' @param data Data frame with the data to be plotted
 #' @return A Shiny app server object
 #' @export
 

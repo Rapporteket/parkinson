@@ -6,6 +6,9 @@
 \usage{
 samlerapport_server(id)
 }
+\arguments{
+\item{id}{Character string module namespace}
+}
 \value{
 A Shiny app server object
 }

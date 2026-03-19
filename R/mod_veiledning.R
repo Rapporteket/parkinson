@@ -19,6 +19,9 @@ info_ui <- function(id) {
 }
 
 #' Server logic
+#' @param id Character string module namespace
+#' @param user Shiny user object containing information about the logged-in user
+#' @param data Data frame with the data to be used in the Rmarkdown rendering and plot
 #' @return A shiny app server object
 #' @export
 

@@ -1,5 +1,7 @@
 #' Provides a dataframe containing data from a registry
 #'
+#' @param datoFra Start date for data retrieval (default: "1999-01-01")
+#' @param datoTil End date for data retrieval (default: "2099-01-01")
 #' @return regData data frame
 #' @export
 

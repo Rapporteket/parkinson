@@ -44,7 +44,9 @@ mod_over_tid_ui <- function(id) {
 
 
 
-#'@title Server fordeling
+#'@title Server over tid
+#'@param id Character string module namespace
+#'@param data Data frame with the data to be used in the plot
 #'
 #'@export
 

@@ -2,10 +2,15 @@
 % Please edit documentation in R/mod_over_tid.R
 \name{mod_over_tid_server}
 \alias{mod_over_tid_server}
-\title{Server fordeling}
+\title{Server over tid}
 \usage{
 mod_over_tid_server(id, data)
 }
+\arguments{
+\item{id}{Character string module namespace}
+
+\item{data}{Data frame with the data to be used in the plot}
+}
 \description{
-Server fordeling
+Server over tid
 }

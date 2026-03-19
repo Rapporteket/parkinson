@@ -6,6 +6,11 @@
 \usage{
 parkGetRegData(datoFra = "1999-01-01", datoTil = "2099-01-01")
 }
+\arguments{
+\item{datoFra}{Start date for data retrieval (default: "1999-01-01")}
+
+\item{datoTil}{End date for data retrieval (default: "2099-01-01")}
+}
 \value{
 regData data frame
 }
