@@ -51,7 +51,7 @@ mod_fordeling_plot_ui <- function(id) {
               label = "Visning:",
               choices = c(
                 "Alder i live" = "PatientAge",
-                "Alder ved d\u00f8d" = "deathAge"
+                "Alder ved død" = "deathAge"
               )
             )
           )
@@ -94,6 +94,9 @@ mod_fordeling_plot_ui <- function(id) {
 }
 
 #' @title Server fordeling
+#' @description Serverlogikk for fordeling plot
+#' @param id Character string module namespace
+#' @param data Data frame med data for plottene
 #'
 #' @export
 

@@ -10,34 +10,16 @@ mod_over_tid_ui <- function(id) {
     shiny::sidebarLayout(
 
       shiny::sidebarPanel(
-        width = 4,
+        width = 3,
 
-        shiny::selectInput( # valg en
-          inputId = ns("var"),
-          label = "Velg variabel",
-          choices = c(
-            "Meslinger rate pr. 1000000" = "measles_incidence_rate_per_1000000_total_population",
-            "Røde hunder rate pr. 1000000" = "rubella_incidence_rate_per_1000000_total_population",
-            "Forkastede prøver meslinger og røde hunder rate pr. 1000000" =
-              "discarded_non_measles_rubella_cases_per_100000_total_population"
+        shiny::tagList(
+          shiny::selectInput(
+            inputId = ns("sorting"),
+            label = "Velg sortering:",
+            choices = c("Hele landet", "Sykehus", "Region"),
+            selected = "Hele landet"
           ),
-          selected = "Meslinger rate pr. 1000000"
-        ),
-
-        shiny::selectInput(# valg to
-          inputId = ns("region"),
-          label = "Velg region",
-          choices = c(
-            "Alle regioner samlet" = "Alle",
-            "Alle regioner delt" = "Alle_delt",
-            "Region Afrika (AFRO)" = "AFRO",
-            "Region Amerika (AMRO" = "AMRO",
-            "Region Sør-Øst Asia (SEARO)" = "SEARO",
-            "Region Europa (EURO)" = "EURO",
-            "Region østlige Middelhavet (EMRO)" = "EMRO",
-            "Region vestlige Stillehavet (WPRO)" = "WPRO"
-          ),
-          selected = "AFRO"
+          shiny::uiOutput(ns("unit_ui"))
         )
       ),
 
@@ -47,7 +29,8 @@ mod_over_tid_ui <- function(id) {
           shiny::tabPanel(
             "Figur",
             value = "Fig",
-            shiny::plotOutput(outputId = ns("over_tid_plot")),
+            shiny::h3("Antall registreringer over tid"),
+            plotly::plotlyOutput(outputId = ns("over_tid_plot")),
             shiny::downloadButton(
               ns("nedlastning_over_tid_plot"),
               "Last ned figur"
@@ -61,7 +44,9 @@ mod_over_tid_ui <- function(id) {
 
 
 
-#'@title Server fordeling
+#'@title Server over tid
+#'@param id Character string module namespace
+#'@param data Data frame with the data to be used in the plot
 #'
 #'@export
 
@@ -70,18 +55,52 @@ mod_over_tid_server <- function(id, data) {
     id,
     function(input, output, session) {
 
-      data_over_tid_reactive <- shiny::reactive({
-        over_tid_utvalg(data, input$var, input$region)
+      data_filtered <- shiny::reactive({
+        shiny::req(input$sorting)
+
+        if (input$sorting == "Hele landet") {
+          data
+        } else if (input$sorting == "Sykehus") {
+          shiny::req(input$unit)
+          data |>
+            dplyr::filter(.data$HealthUnitName == input$unit)
+        } else if (input$sorting == "Region") {
+          shiny::req(input$unit)
+          data |>
+            dplyr::filter(.data$RHF == input$unit)
+        }
+      })
+
+      output$unit_ui <- shiny::renderUI({
+        shiny::req(input$sorting)
+
+        if (input$sorting == "Hele landet") {
+          return(NULL)
+        }
+
+        unitChoices <- switch(
+          input$sorting,
+          "Sykehus" = sort(unique(data$HealthUnitName)),
+          "Region" = sort(unique(data$RHF))
+        )
+
+        shiny::selectInput(
+          inputId = shiny::NS(id, "unit"),
+          label = "Velg enhet:",
+          choices = unitChoices,
+          selected = unitChoices[1]
+        )
       })
 
       plot_over_tid_reactive <- shiny::reactive({
-        over_tid_plot(data_over_tid_reactive(), input$region)
+        makeYearCountPlot(data_filtered())
       })
 
-      output$over_tid_plot <- shiny::renderPlot({
-        plot_over_tid_reactive()
+      output$over_tid_plot <- plotly::renderPlotly({
+        plot_over_tid_reactive() |>
+          plotly::ggplotly(tooltip = "text") |>
+          plotly::config(displayModeBar = FALSE)
       })
-
       # Lag nedlastning
       output$nedlastning_over_tid_plot <-  shiny::downloadHandler(
         filename = function() {

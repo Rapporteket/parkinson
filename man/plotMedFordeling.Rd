@@ -7,7 +7,9 @@
 plotMedFordeling(data, fordelingsVariabel)
 }
 \arguments{
-\item{data}{datasett "licorice gargle"}
+\item{data}{Data frame med data for plottene}
+
+\item{fordelingsVariabel}{Variabelen som skal brukes for å gruppere dataene i plottene}
 }
 \value{
 datasett med norske nivåer og verdier

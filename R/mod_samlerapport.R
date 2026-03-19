@@ -42,6 +42,7 @@ samlerapport_ui <- function(id) {
 }
 
 #' Server logic for samlerapport
+#' @param id Character string module namespace
 #' @return A Shiny app server object
 #' @export
 

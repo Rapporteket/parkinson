@@ -6,6 +6,11 @@
 \usage{
 mod_andeler_server(id, data)
 }
+\arguments{
+\item{id}{Character string module namespace}
+
+\item{data}{Data frame with the data to be plotted}
+}
 \value{
 A Shiny app server object
 }

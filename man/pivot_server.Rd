@@ -4,7 +4,7 @@
 \alias{pivot_server}
 \title{Server logic for the pivot module}
 \usage{
-pivot_server(id, user)
+pivot_server(data, id, user)
 }
 \arguments{
 \item{id}{Character string module namespace}

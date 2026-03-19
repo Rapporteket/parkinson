@@ -24,17 +24,68 @@ PlotAndelerGrVar(
 )
 }
 \arguments{
-\item{RegData}{A data frame containing the registry data to be used for plotting.}
+\item{RegData}{A data frame containing the registry data to be
+used for plotting.}
+
+\item{Variabel}{A numeric vector representing the variable of
+interest for which the proportions or distributions will be
+calculated.}
+
+\item{grVar}{A character string specifying the grouping variable
+in RegData (default is "ShNavn").}
+
+\item{hovedgrTxt}{A character string for the label of the main
+group in the plot (default is "Total andel").}
+
+\item{kvalIndGrenser}{A numeric vector specifying the quality
+indicator thresholds for coloring the plot (default is NA).}
+
+\item{tittel}{A character string for the title of the plot
+(default is "tittel").}
+
+\item{utvalgTxt}{A character string or vector for the subtitle or
+additional text to be displayed on the plot (default is "").}
+
+\item{Ngrense}{A numeric value specifying the minimum number of
+observations required in a group for it to be included in the
+plot (default is 10).}
+
+\item{bestKvalInd}{A character string indicating whether a higher
+or lower value of the variable is considered better for the
+quality indicator coloring (default is "lav").}
+
+\item{fargepalett}{A character string specifying the color palette
+to be used for the plot (default is "BlaaOff").}
+
+\item{grtxt}{A character string for additional group text to be
+displayed on the plot (default is "").}
+
+\item{titleSize}{A numeric value specifying the font size for the
+plot title (default is 20).}
+
+\item{subtitleSize}{A numeric value specifying the font size for
+the plot subtitle (default is 15).}
+
+\item{legendSize}{A numeric value specifying the font size for
+the plot legend (default is 12).}
+
+\item{axisTextSize}{A numeric value specifying the font size for
+the axis text (default is 12).}
+
+\item{nTicks}{A numeric value specifying the number of ticks to
+be displayed on the y-axis (default is 5).}
 }
 \value{
-A plot object visualizing the group-specific proportions or distributions.
+A plot object visualizing the group-specific proportions
+  or distributions.
 }
 \description{
-This function generates a plot for group-specific proportions or distributions
-             based on the provided registry data.
+This function generates a plot for group-specific
+  proportions or distributions based on the provided registry data.
 }
 \details{
-This function is designed to work with registry data and create visualizations
-         that highlight group-specific metrics. The exact details of the plot depend on
-         the structure of the input data and the specific implementation of the function.
+This function is designed to work with registry data and
+  create visualizations that highlight group-specific metrics. The
+  exact details of the plot depend on the structure of the input
+  data and the specific implementation of the function.
 }
