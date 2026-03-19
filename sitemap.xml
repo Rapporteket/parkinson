@@ -12,14 +12,13 @@
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/info_server.html</loc></url>
 <url><loc>/reference/info_ui.html</loc></url>
+<url><loc>/reference/makeYearCountPlot.html</loc></url>
 <url><loc>/reference/mod_andeler_server.html</loc></url>
 <url><loc>/reference/mod_andeler_ui.html</loc></url>
 <url><loc>/reference/mod_fordeling_plot_server.html</loc></url>
 <url><loc>/reference/mod_fordeling_plot_ui.html</loc></url>
 <url><loc>/reference/mod_over_tid_server.html</loc></url>
 <url><loc>/reference/mod_over_tid_ui.html</loc></url>
-<url><loc>/reference/over_tid_plot.html</loc></url>
-<url><loc>/reference/over_tid_utvalg.html</loc></url>
 <url><loc>/reference/parkGetRegData.html</loc></url>
 <url><loc>/reference/parkPreprosess.html</loc></url>
 <url><loc>/reference/pivot_server.html</loc></url>
