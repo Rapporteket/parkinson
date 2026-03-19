@@ -21,14 +21,23 @@ app_server <- function(input, output, session) {
     caller = "parkinson"
   )
 
+<<<<<<< ePROM_data
   data <- parkGetRegData()
   RegData <- data$RegData
+=======
+  RegData <- parkGetRegData()
+
+>>>>>>> main
   info_server("info", user = user, data = RegData)
   samlerapport_server("samlerapport")
-  pivot_server("pivot", user = user)
+  pivot_server(RegData, "pivot", user = user)
   mod_fordeling_plot_server("fordeling", data = RegData)
   mod_over_tid_server("over_tid", data = RegData)
+<<<<<<< ePROM_data
   mod_andeler_server("andeler", inputData = data)
+=======
+  mod_andeler_server("andeler", data = RegData)
+>>>>>>> main
 
   #################
   # Subscriptions #

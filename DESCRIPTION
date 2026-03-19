@@ -26,19 +26,16 @@ Depends:
   R (>= 4.1.0)
 Imports:
     dplyr,
-    DBI,
-    DT,
     ggplot2,
-    kableExtra,
-    knitr,
+    jsonlite,
     lubridate,
     plotly,
     rapbase,
-    readr,
     rlang,
     rpivotTable,
+    scales,
     shiny,
-    shinyalert
+    tidyr
 Remotes:
   Rapporteket/rapbase@main
 License: GPL-3

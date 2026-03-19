@@ -5,7 +5,8 @@
 
 
 #' Preprosessering
-#' @param data datasett "licorice gargle"
+#' @param data Data frame med data for plottene
+#' @param fordelingsVariabel Variabelen som skal brukes for å gruppere dataene i plottene
 #' @return datasett med norske nivåer og verdier
 #' @export
 

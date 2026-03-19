@@ -6,6 +6,13 @@
 \usage{
 info_server(id, user, data)
 }
+\arguments{
+\item{id}{Character string module namespace}
+
+\item{user}{Shiny user object containing information about the logged-in user}
+
+\item{data}{Data frame with the data to be used in the Rmarkdown rendering and plot}
+}
 \value{
 A shiny app server object
 }

@@ -6,6 +6,11 @@
 \usage{
 mod_fordeling_plot_server(id, data)
 }
+\arguments{
+\item{id}{Character string module namespace}
+
+\item{data}{Data frame med data for plottene}
+}
 \description{
-Server fordeling
+Serverlogikk for fordeling plot
 }
