@@ -1,14 +1,17 @@
 makeMonthlyColPlot <- function(data, dateCol, fillCol, yearsBack = 1) {
   dataFiltered <- data |>
     dplyr::select(
-      dplyr::all_of(c(dateCol, fillCol, "PasientGUID"))
+      dplyr::all_of(c("FormTypeId", dateCol, fillCol, "PasientGUID"))
     ) |>
     dplyr::filter(
       !is.na(.data[[dateCol]]),
-      !is.na(.data[[fillCol]])
-    ) |>
-    dplyr::filter(
-      .data[[dateCol]] >= lubridate::today() - lubridate::years(yearsBack)
+      !is.na(.data[[fillCol]]),
+      .data[[dateCol]] >=
+        lubridate::floor_date(
+          lubridate::today() - lubridate::years(yearsBack),
+          unit = "month"
+        ),
+      .data$FormTypeId == 1
     )
 
   antallRegistreringer <- nrow(dataFiltered)

@@ -10,9 +10,11 @@
 #'
 
 
-parkPreprosess <- function(RegData, promData) {
+parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
+  RegData <- bakgrunnSkjema |>
+    dplyr::bind_rows(konsultasjonSkjema)
   #-----------------------------------------------#
-  #              Bakgunnskjema                    #
+  #              Regdata                          #
   #-----------------------------------------------#
   # -------------- Dato formatering -------------
   date_cols <- c(
@@ -51,41 +53,55 @@ parkPreprosess <- function(RegData, promData) {
   RegData <- RegData |>
     dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238", "G239"))
 
-  RegData <- RegData |>
-    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
+  
 
 
   #------- Kaviltetsindikatorer -------
-  # Hvis en form for bilde er tatt, så settes tattBilde til 1, ellers 0
+  
+  # Mottatt standardisert kartlegging
+  RegData <- RegData |>
+    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
+  
+  # Tatt bilde
   RegData$tattBilde <- RegData$PS_DIAG_CT | RegData$PS_DIAG_MR | RegData$PS_DIAG_DAT | RegData$PS_DIAG_PET
 
   # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
-  RegData$oppdatertBehandling <- RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
+  RegData <- RegData |>
+  dplyr::group_by(PasientGUID) |>
+    dplyr::mutate(oppdatertBehandling = any(
+      RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
+    )) |>
+    dplyr::ungroup()
 
-  # Mottatt avansert behandling
+  # Mottatt avansert behandling 
+  # Sjekker om pasienten har ICD-10-kode G20, er i live, 
+  # og har en pågående avansert behandling (APO, PRO, DUO, DBS eller LEC)
+  # Sjekker først alle rader og oppdaterer for unike pasienter,
+  # slik at hvis en pasient har mottatt avansert behandling i noen av registreringene, 
+  # vil det reflekteres i alle registreringene for den pasienten.
+  # NA if død or not G20
   RegData <- RegData |>
     dplyr::mutate(
-      mottattAvansertBehandling = dplyr::if_else(
-        .data$ICD_10 == "G20",
-        .data$PS_APO | .data$PS_PRO | .data$PS_DUO | .data$PS_DBS | .data$PS_LEC,
+      mottattAvansertBehandlingReg = dplyr::if_else(
+        ICD_10 == "G20" & alive,
+        (
+          (dplyr::coalesce(PS_APO, FALSE) & is.na(PS_APO_SLUTT_DATO)) |
+          (dplyr::coalesce(PS_PRO, FALSE) & is.na(PS_PRO_SLUTT_DATO)) |
+          (dplyr::coalesce(PS_DUO, FALSE) & is.na(PS_DUO_SLUTT_DATO)) |
+          (dplyr::coalesce(PS_DBS, FALSE) & is.na(PS_DBS_SLUTT_DATO)) |
+          (dplyr::coalesce(PS_LEC, FALSE) & is.na(PS_LEC_SLUTT_DATO))
+        ),
         NA
       )
-    )
-  # Definer kvalitetsindikatorgrenser
-  # nolint start
-  # kvalIndDf <- jsonlite::fromJSON(
-  #   "https://prod-api.skde.org/data/parkinson/indicators?unit_name[]=Nasjonalt&year=2024&type=ind"
-  # ) |>
-  #   dplyr::select(.data$ind_id, .data$level_green, .data$level_yellow, .data$level_direction) |>
-  #   dplyr::mutate(
-  #     ind_id = dplyr::recode(
-  #       .data$ind_id,
-  #       "parkinson_bildedia" = "bilde",
-  #       "parkinson_eprom" = "eprom",
-  #       "parkinson_syst_und" = "sysUnd"
-  #     )
-  #   )
-  # nolint end
+    ) |>
+    dplyr::group_by(PasientGUID) |>
+    dplyr::mutate(
+      mottattAvansertBehandlingPasient = any(
+        mottattAvansertBehandlingReg,
+        na.rm = TRUE
+      )
+    ) |>
+    dplyr::ungroup()
 
   attr(RegData, "kvalIndGrenser") <- list(
     tattBilde = c(0, 75, 90, 100),
@@ -110,6 +126,7 @@ parkPreprosess <- function(RegData, promData) {
   attr(promData, "kvalIndGrenser") <- list(
     tilfredsSpesialist = c(0, 40, 60, 100)
   )
+  #------------ Slutt ePromSkjema ---------------#
 
   return(list(
     RegData = RegData,

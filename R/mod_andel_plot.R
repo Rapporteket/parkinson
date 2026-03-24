@@ -13,7 +13,7 @@
   "DBS"            = "PS_DBS",
   "Lec"            = "PS_LEC",
   "Standarsisert kartlegging" = "StandardisertKartlegging",
-  "Mottatt avansert behandling" = "mottattAvansertBehandling",
+  "Mottatt avansert behandling" = "mottattAvansertBehandlingPasient",
   "Fornøyd med tilbud fra spesialhelsetjenesten" = "tilfredsSpesialist"
 )
 
@@ -120,7 +120,7 @@ mod_andeler_server <- function(id, inputData) {
           datoColNavn = "FormDate",
           datoFra = input$datoRange[1],
           datoTil = input$datoRange[2]
-        )
+        ) 
 
         var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]
@@ -130,7 +130,6 @@ mod_andeler_server <- function(id, inputData) {
           "etter", bins_label,
           "med mer enn", 10, "registreringer"
         )
-
         PlotAndelerGrVar(
           RegData = data,
           Variabel = data[[var]],
