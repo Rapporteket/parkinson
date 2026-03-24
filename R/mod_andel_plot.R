@@ -8,12 +8,13 @@
   "Tatt PET"       = "PS_DIAG_PET",
   "Tatt bilde"     =  "tattBilde",
   "Oppdatert behandling" = "oppdatertBehandling",
-  "APO"            = "PS_APO",
-  "DUO"            = "PS_DUO",
-  "DBS"            = "PS_DBS",
-  "Lec"            = "PS_LEC",
-  "Standarsisert kartlegging" = "StandardisertKartlegging",
+  "APO"            = "mottattAPOPasient",
+  "DUO"            = "mottattDUOPasient",
+  "DBS"            = "mottattDBSPasient",
+  "Lec"            = "mottattLECPasient",
+  "PRO"            = "mottattPROPasient",
   "Mottatt avansert behandling" = "mottattAvansertBehandlingPasient",
+  "Standarsisert kartlegging" = "StandardisertKartlegging",
   "Fornøyd med tilbud fra spesialhelsetjenesten" = "tilfredsSpesialist"
 )
 

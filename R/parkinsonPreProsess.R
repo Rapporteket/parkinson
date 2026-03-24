@@ -72,29 +72,54 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
 
   # Mottatt avansert behandling
   # Sjekker om pasienten har ICD-10-kode G20, er i live,
-  # og har en pågående avansert behandling (APO, PRO, DUO, DBS eller LEC)
-  # Sjekker først alle rader og oppdaterer for unike pasienter,
-  # slik at hvis en pasient har mottatt avansert behandling i noen av registreringene,
-  # vil det reflekteres i alle registreringene for den pasienten.
-  # NA if død or not G20
+  # og har en pågående avansert behandling (APO, PRO, DUO, DBS eller LEC).
+  # For hver rad sjekkes det om behandlingen er startet (f.eks. PS_APO = TRUE)
+  # og ikke avsluttet (slutt-dato er NA). Hvis pasienten er død eller ikke har G20,
+  # settes verdien til NA.
+  # Deretter rulles verdiene opp til pasientnivå (group_by PasientGUID),
+  # slik at hvis en pasient har mottatt en gitt avansert behandling i minst én
+  # registrering, vil det gjelde for alle registreringene til den pasienten.
+  # Til slutt lages en samlevariabel (mottattAvansertBehandlingPasient) som er
+  # TRUE hvis pasienten mottar minst én av de fem avanserte behandlingene.
   RegData <- RegData |>
     dplyr::mutate(
-      mottattAvansertBehandlingReg = dplyr::if_else(
+      mottattAPOReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        (
-          (dplyr::coalesce(.data$PS_APO, FALSE) & is.na(.data$PS_APO_SLUTT_DATO)) |
-            (dplyr::coalesce(.data$PS_PRO, FALSE) & is.na(.data$PS_PRO_SLUTT_DATO)) |
-            (dplyr::coalesce(.data$PS_DUO, FALSE) & is.na(.data$PS_DUO_SLUTT_DATO)) |
-            (dplyr::coalesce(.data$PS_DBS, FALSE) & is.na(.data$PS_DBS_SLUTT_DATO)) |
-            (dplyr::coalesce(.data$PS_LEC, FALSE) & is.na(.data$PS_LEC_SLUTT_DATO))
-        ),
+        dplyr::coalesce(.data$PS_APO, FALSE) & is.na(.data$PS_APO_SLUTT_DATO),
+        NA
+      ),
+      mottattPROReg = dplyr::if_else(
+        .data$ICD_10 == "G20" & .data$alive,
+        dplyr::coalesce(.data$PS_PRO, FALSE) & is.na(.data$PS_PRO_SLUTT_DATO),
+        NA
+      ),
+      mottattDUOReg = dplyr::if_else(
+        .data$ICD_10 == "G20" & .data$alive,
+        dplyr::coalesce(.data$PS_DUO, FALSE) & is.na(.data$PS_DUO_SLUTT_DATO),
+        NA
+      ),
+      mottattDBSReg = dplyr::if_else(
+        .data$ICD_10 == "G20" & .data$alive,
+        dplyr::coalesce(.data$PS_DBS, FALSE) & is.na(.data$PS_DBS_SLUTT_DATO),
+        NA
+      ),
+      mottattLECReg = dplyr::if_else(
+        .data$ICD_10 == "G20" & .data$alive,
+        dplyr::coalesce(.data$PS_LEC, FALSE) & is.na(.data$PS_LEC_SLUTT_DATO),
         NA
       )
     ) |>
+    # Roll up to patient level (TRUE if any registration is TRUE)
     dplyr::group_by(.data$PasientGUID) |>
     dplyr::mutate(
+      mottattAPOPasient = any(.data$mottattAPOReg, na.rm = TRUE),
+      mottattPROPasient = any(.data$mottattPROReg, na.rm = TRUE),
+      mottattDUOPasient = any(.data$mottattDUOReg, na.rm = TRUE),
+      mottattDBSPasient = any(.data$mottattDBSReg, na.rm = TRUE),
+      mottattLECPasient = any(.data$mottattLECReg, na.rm = TRUE),
       mottattAvansertBehandlingPasient = any(
-        .data$mottattAvansertBehandlingReg,
+        .data$mottattAPOReg | .data$mottattPROReg | .data$mottattDUOReg |
+          .data$mottattDBSReg | .data$mottattLECReg,
         na.rm = TRUE
       )
     ) |>
