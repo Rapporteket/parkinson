@@ -120,7 +120,7 @@ mod_andeler_server <- function(id, inputData) {
           datoColNavn = "FormDate",
           datoFra = input$datoRange[1],
           datoTil = input$datoRange[2]
-        ) 
+        )
 
         var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]

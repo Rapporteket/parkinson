@@ -53,51 +53,48 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
   RegData <- RegData |>
     dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238", "G239"))
 
-  
-
-
   #------- Kaviltetsindikatorer -------
-  
+
   # Mottatt standardisert kartlegging
   RegData <- RegData |>
     dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
-  
+
   # Tatt bilde
   RegData$tattBilde <- RegData$PS_DIAG_CT | RegData$PS_DIAG_MR | RegData$PS_DIAG_DAT | RegData$PS_DIAG_PET
 
   # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
   RegData <- RegData |>
-  dplyr::group_by(PasientGUID) |>
+    dplyr::group_by(.data$PasientGUID) |>
     dplyr::mutate(oppdatertBehandling = any(
       RegData$LastUpdate >= Sys.Date() - lubridate::years(2)
     )) |>
     dplyr::ungroup()
 
-  # Mottatt avansert behandling 
-  # Sjekker om pasienten har ICD-10-kode G20, er i live, 
+  # Mottatt avansert behandling
+  # Sjekker om pasienten har ICD-10-kode G20, er i live,
   # og har en pågående avansert behandling (APO, PRO, DUO, DBS eller LEC)
   # Sjekker først alle rader og oppdaterer for unike pasienter,
-  # slik at hvis en pasient har mottatt avansert behandling i noen av registreringene, 
+  # slik at hvis en pasient har mottatt avansert behandling i noen av registreringene,
   # vil det reflekteres i alle registreringene for den pasienten.
   # NA if død or not G20
   RegData <- RegData |>
     dplyr::mutate(
       mottattAvansertBehandlingReg = dplyr::if_else(
-        ICD_10 == "G20" & alive,
+        .data$ICD_10 == "G20" & .data$alive,
         (
-          (dplyr::coalesce(PS_APO, FALSE) & is.na(PS_APO_SLUTT_DATO)) |
-          (dplyr::coalesce(PS_PRO, FALSE) & is.na(PS_PRO_SLUTT_DATO)) |
-          (dplyr::coalesce(PS_DUO, FALSE) & is.na(PS_DUO_SLUTT_DATO)) |
-          (dplyr::coalesce(PS_DBS, FALSE) & is.na(PS_DBS_SLUTT_DATO)) |
-          (dplyr::coalesce(PS_LEC, FALSE) & is.na(PS_LEC_SLUTT_DATO))
+          (dplyr::coalesce(.data$PS_APO, FALSE) & is.na(.data$PS_APO_SLUTT_DATO)) |
+            (dplyr::coalesce(.data$PS_PRO, FALSE) & is.na(.data$PS_PRO_SLUTT_DATO)) |
+            (dplyr::coalesce(.data$PS_DUO, FALSE) & is.na(.data$PS_DUO_SLUTT_DATO)) |
+            (dplyr::coalesce(.data$PS_DBS, FALSE) & is.na(.data$PS_DBS_SLUTT_DATO)) |
+            (dplyr::coalesce(.data$PS_LEC, FALSE) & is.na(.data$PS_LEC_SLUTT_DATO))
         ),
         NA
       )
     ) |>
-    dplyr::group_by(PasientGUID) |>
+    dplyr::group_by(.data$PasientGUID) |>
     dplyr::mutate(
       mottattAvansertBehandlingPasient = any(
-        mottattAvansertBehandlingReg,
+        .data$mottattAvansertBehandlingReg,
         na.rm = TRUE
       )
     ) |>

@@ -34,8 +34,8 @@ info_server <- function(id, user, data) {
       # Info
       output$info <- shiny::renderText({
         nProm <- nrow(promData)
-        nBakgrunn <- nrow(RegData |> dplyr::filter(FormTypeId == 1))
-        nKonsultasjon <- nrow(RegData |> dplyr::filter(FormTypeId == 2))
+        nBakgrunn <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 1))
+        nKonsultasjon <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 2))
         paste0(
           "<h3>Antall skjema</h3>",
           "<p>Oversikt over antall skjema som er registrert i systemet. ",
@@ -59,7 +59,8 @@ info_server <- function(id, user, data) {
           "<li>Overvåke og forbedre kvaliteten på diagnostikk og behandling av pasienter med parkinsonisme</li>",
           "<li>Kartlegge variasjon i utredning, behandling og oppfølging mellom sykehus og helseregioner</li>",
           "<li>Bidra til forskning og kunnskapsutvikling innen Parkinsons sykdom</li>",
-          "<li>Gi grunnlag for pasientrapporterte utfallsmål (PROM) for å måle pasientenes egen opplevelse av sykdom og behandling</li>",
+          "<li>Gi grunnlag for pasientrapporterte utfallsmål (PROM) for å 
+          måle pasientenes egen opplevelse av sykdom og behandling</li>",
           "<li>Sikre likeverdig helsetilbud uavhengig av bosted</li>",
           "</ul>",
           "<p>Rapporteket gir tilgang til oppdaterte oversikter, figurer og tabeller basert på data fra registeret, ",
