@@ -85,43 +85,74 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
     dplyr::mutate(
       mottattAPOReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        dplyr::coalesce(.data$PS_APO, FALSE) & is.na(.data$PS_APO_SLUTT_DATO),
+        dplyr::coalesce(.data$PS_APO, FALSE),
         NA
       ),
       mottattPROReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        dplyr::coalesce(.data$PS_PRO, FALSE) & is.na(.data$PS_PRO_SLUTT_DATO),
+        dplyr::coalesce(.data$PS_PRO, FALSE),
         NA
       ),
       mottattDUOReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        dplyr::coalesce(.data$PS_DUO, FALSE) & is.na(.data$PS_DUO_SLUTT_DATO),
+        dplyr::coalesce(.data$PS_DUO, FALSE),
         NA
       ),
       mottattDBSReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        dplyr::coalesce(.data$PS_DBS, FALSE) & is.na(.data$PS_DBS_SLUTT_DATO),
+        dplyr::coalesce(.data$PS_DBS, FALSE),
         NA
       ),
       mottattLECReg = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
-        dplyr::coalesce(.data$PS_LEC, FALSE) & is.na(.data$PS_LEC_SLUTT_DATO),
+        dplyr::coalesce(.data$PS_LEC, FALSE),
         NA
       )
     ) |>
-    # Roll up to patient level (TRUE if any registration is TRUE)
+    # Rull opp til pasientnivå:
+    # For hver behandling sjekkes det om siste startdato er senere enn siste
+    # sluttdato (eller om ingen sluttdato finnes i det hele tatt). I så fall er
+    # behandlingen pågående (TRUE).
     dplyr::group_by(.data$PasientGUID) |>
     dplyr::mutate(
-      mottattAPOPasient = any(.data$mottattAPOReg, na.rm = TRUE),
-      mottattPROPasient = any(.data$mottattPROReg, na.rm = TRUE),
-      mottattDUOPasient = any(.data$mottattDUOReg, na.rm = TRUE),
-      mottattDBSPasient = any(.data$mottattDBSReg, na.rm = TRUE),
-      mottattLECPasient = any(.data$mottattLECReg, na.rm = TRUE),
-      mottattAvansertBehandlingPasient = any(
-        .data$mottattAPOReg | .data$mottattPROReg | .data$mottattDUOReg |
-          .data$mottattDBSReg | .data$mottattLECReg,
-        na.rm = TRUE
-      )
+      aktivAPO = dplyr::if_else(
+        any(.data$mottattAPOReg, na.rm = TRUE),
+        max(.data$PS_APO_STDATO[.data$mottattAPOReg %in% TRUE], na.rm = TRUE) >
+          dplyr::coalesce(max(.data$PS_APO_SLUTT_DATO[.data$mottattAPOReg %in% TRUE],
+                              na.rm = TRUE), as.Date("1900-01-01")),
+        FALSE
+      ),
+      aktivPRO = dplyr::if_else(
+        any(.data$mottattPROReg, na.rm = TRUE),
+        max(.data$PS_PRO_STDATO[.data$mottattPROReg %in% TRUE], na.rm = TRUE) >
+          dplyr::coalesce(max(.data$PS_PRO_SLUTT_DATO[.data$mottattPROReg %in% TRUE],
+                              na.rm = TRUE), as.Date("1900-01-01")),
+        FALSE
+      ),
+      aktivDUO = dplyr::if_else(
+        any(.data$mottattDUOReg, na.rm = TRUE),
+        max(.data$PS_DUO_STDATO[.data$mottattDUOReg %in% TRUE], na.rm = TRUE) >
+          dplyr::coalesce(max(.data$PS_DUO_SLUTT_DATO[.data$mottattDUOReg %in% TRUE],
+                              na.rm = TRUE), as.Date("1900-01-01")),
+        FALSE
+      ),
+      aktivDBS = dplyr::if_else(
+        any(.data$mottattDBSReg, na.rm = TRUE),
+        max(.data$PS_DBS_STDATO[.data$mottattDBSReg %in% TRUE], na.rm = TRUE) >
+          dplyr::coalesce(max(.data$PS_DBS_SLUTT_DATO[.data$mottattDBSReg %in% TRUE],
+                              na.rm = TRUE), as.Date("1900-01-01")),
+        FALSE
+      ),
+      aktivLEC = dplyr::if_else(
+        any(.data$mottattLECReg, na.rm = TRUE),
+        max(.data$PS_LEC_STDATO[.data$mottattLECReg %in% TRUE], na.rm = TRUE) >
+          dplyr::coalesce(max(.data$PS_LEC_SLUTT_DATO[.data$mottattLECReg %in% TRUE],
+                              na.rm = TRUE), as.Date("1900-01-01")),
+        FALSE
+      ),
+      mottattAvansertBehandlingPasient = .data$aktivAPO |
+        .data$aktivPRO | .data$aktivDUO |
+        .data$aktivDBS | .data$aktivLEC
     ) |>
     dplyr::ungroup()
 
