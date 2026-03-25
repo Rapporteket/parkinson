@@ -23,7 +23,7 @@ app_server <- function(input, output, session) {
 
   data <- parkGetRegData()
   RegData <- data$RegData
-  info_server("info", user = user, data = RegData)
+  info_server("info", user = user, data = data)
   samlerapport_server("samlerapport")
   pivot_server(RegData, "pivot", user = user)
   mod_fordeling_plot_server("fordeling", data = RegData)
