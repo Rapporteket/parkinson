@@ -71,16 +71,15 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
     dplyr::ungroup()
 
   # Mottatt avansert behandling
-  # Sjekker om pasienten har ICD-10-kode G20, er i live,
-  # og har en pågående avansert behandling (APO, PRO, DUO, DBS eller LEC).
-  # For hver rad sjekkes det om behandlingen er startet (f.eks. PS_APO = TRUE)
-  # og ikke avsluttet (slutt-dato er NA). Hvis pasienten er død eller ikke har G20,
-  # settes verdien til NA.
-  # Deretter rulles verdiene opp til pasientnivå (group_by PasientGUID),
-  # slik at hvis en pasient har mottatt en gitt avansert behandling i minst én
-  # registrering, vil det gjelde for alle registreringene til den pasienten.
+  # Sjekker om pasienten har ICD-10-kode G20 og er i live.
+  # For hver behandlingstype (APO, PRO, DUO, DBS, LEC) opprettes først en
+  # registreringsvariabel (mottatt*Reg) som er TRUE/FALSE for kvalifiserte
+  # pasienter og NA ellers.
+  # Deretter rulles verdiene opp til pasientnivå (group_by PasientGUID).
+  # En behandling regnes som aktiv (aktiv*) dersom siste startdato er senere
+  # enn siste sluttdato (eller ingen sluttdato finnes).
   # Til slutt lages en samlevariabel (mottattAvansertBehandlingPasient) som er
-  # TRUE hvis pasienten mottar minst én av de fem avanserte behandlingene.
+  # TRUE hvis pasienten har minst én aktiv avansert behandling.
   RegData <- RegData |>
     dplyr::mutate(
       mottattAPOReg = dplyr::if_else(
