@@ -68,49 +68,54 @@ app_server <- function(input, output, session) {
   #################
   # Dispatchments #
   #################
-
+  adminTabsAdded <- shiny::reactiveVal(FALSE)
   shiny::observeEvent(
     shiny::req(user$role()), {
-      if (user$role() != "SC") {
-        message("Removing dispatchment tab for user with role ", user$role())
-        shiny::removeTab("tabs", target = "Utsending")
-        message("Removing export tab for user with role ", user$role())
-        shiny::removeTab("tabs", target = "Eksport")
-      } else {
-        message("Adding dispatchment tab for user with role ", user$role())
-        shiny::insertTab(
-          "tabs",
-          shiny::tabPanel(
-            "Utsending",
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::autoReportFormatInput("dispatchment"),
-                rapbase::autoReportOrgInput("dispatchment"),
-                rapbase::autoReportInput("dispatchment")
+      if (user$role() == "SC") {
+        if (!adminTabsAdded()){
+          message("Adding dispatchment tab for user with role ", user$role())
+          message("Adding export tab for user with role ", user$role())
+          shiny:: appendTab(
+            inputId = "tabs",
+            tab = shiny::navbarMenu(
+              "Admin",
+              shiny::tabPanel(
+                "Utsending",
+                shiny::sidebarLayout(
+                  shiny::sidebarPanel(
+                    rapbase::autoReportFormatInput("dispatchment"),
+                    rapbase::autoReportOrgInput("dispatchment"),
+                    rapbase::autoReportInput("dispatchment")
+                  ),
+                  shiny::mainPanel(
+                    rapbase::autoReportUI("dispatchment")
+                  )
+                )
               ),
-              shiny::mainPanel(
-                rapbase::autoReportUI("dispatchment")
-              )
-            )
-          ),
-          target = "Pivot-tabell",
-          position = "after"
-        )
-        message("Adding export tab for user with role ", user$role())
-        shiny::appendTab(
-          "tabs",
-          shiny::tabPanel(
-            "Eksport",
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::exportUCInput("export")
-              ),
-              shiny::mainPanel(
-                rapbase::exportGuideUI("exportGuide")
+              shiny::tabPanel(
+                "Eksport",
+                shiny::sidebarLayout(
+                  shiny::sidebarPanel(
+                    rapbase::exportUCInput("export")
+                  ),
+                  shiny::mainPanel(
+                    rapbase::exportGuideUI("exportGuide")
+                  )
+                )
               )
             )
           )
-        )
+        }
+        adminTabsAdded(TRUE)
+      } else {
+        if (adminTabsAdded()) {
+          message("Removing dispatchment tab for user with role ", user$role())
+          shiny::removeTab("tabs", target = "Utsending")
+          message("Removing export tab for user with role ", user$role())
+          shiny::removeTab("tabs", target = "Eksport")
+          shiny::removeTab("tabs", target = "Admin")
+        }
+        adminTabsAdded(FALSE)
       }
     }
   )
