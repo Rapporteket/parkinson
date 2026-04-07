@@ -141,18 +141,20 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
       dplyr::filter(.data[[mottatt]] %in% TRUE) |>
       dplyr::group_by(.data$PasientGUID) |>
       dplyr::summarise(
-      sisteStart = if (all(is.na(.data[[start]]))) as.Date(NA) else max(.data[[start]], na.rm = TRUE),
-      sisteSlutt = if (all(is.na(.data[[slutt]]))) as.Date(NA) else max(.data[[slutt]], na.rm = TRUE),
-      .groups = "drop"
+        sisteStart = if (all(is.na(.data[[start]]))) as.Date(NA) else max(.data[[start]], na.rm = TRUE),
+        sisteSlutt = if (all(is.na(.data[[slutt]]))) as.Date(NA) else max(.data[[slutt]], na.rm = TRUE),
+        .groups = "drop"
       ) |>
       dplyr::mutate(
-      aktiv = dplyr::if_else(
-      !is.na(.data$sisteStart),
-      dplyr::if_else(!is.na(.data$sisteSlutt),
-          .data$sisteStart > .data$sisteSlutt,
-          TRUE),
-      FALSE
-      )
+        aktiv = dplyr::if_else(
+          !is.na(.data$sisteStart),
+          dplyr::if_else(
+            !is.na(.data$sisteSlutt),
+            .data$sisteStart > .data$sisteSlutt,
+            TRUE
+          ),
+          FALSE
+        )
       ) |>
       dplyr::select("PasientGUID", "aktiv")
 
@@ -164,7 +166,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
       dplyr::mutate(aktiv = FALSE)
 
     dplyr::bind_rows(aktivBehandling, inaktivBehandling)
-    }
+  }
 
   # Beregn behandlingsflagg for hver type i én vektorisert operasjon
 
@@ -178,14 +180,34 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
   # og opprett samlevariabel for avansert behandling
   aktivFlags <- RegData |>
     dplyr::distinct(.data$PasientGUID) |>
-    dplyr::left_join(aktivApo |> dplyr::rename(aktivAPO = "aktiv"), by = "PasientGUID") |>
-    dplyr::left_join(aktivPro |> dplyr::rename(aktivPRO = "aktiv"), by = "PasientGUID") |>
-    dplyr::left_join(aktivDuo |> dplyr::rename(aktivDUO = "aktiv"), by = "PasientGUID") |>
-    dplyr::left_join(aktivDbs |> dplyr::rename(aktivDBS = "aktiv"), by = "PasientGUID") |>
-    dplyr::left_join(aktivLec |> dplyr::rename(aktivLEC = "aktiv"), by = "PasientGUID") |>
+    dplyr::left_join(
+      aktivApo |>
+        dplyr::rename(aktivAPO = "aktiv"),
+      by = "PasientGUID"
+    ) |>
+    dplyr::left_join(
+      aktivPro |>
+        dplyr::rename(aktivPRO = "aktiv"),
+      by = "PasientGUID"
+    ) |>
+    dplyr::left_join(
+      aktivDuo |>
+        dplyr::rename(aktivDUO = "aktiv"),
+      by = "PasientGUID"
+    ) |>
+    dplyr::left_join(
+      aktivDbs |>
+        dplyr::rename(aktivDBS = "aktiv"),
+      by = "PasientGUID"
+    ) |>
+    dplyr::left_join(
+      aktivLec |>
+        dplyr::rename(aktivLEC = "aktiv"),
+      by = "PasientGUID"
+    ) |>
     dplyr::mutate(
       dplyr::across(dplyr::starts_with("aktiv"), ~ dplyr::coalesce(.x, FALSE)),
-      aktivAvansertBehandling = aktivAPO | aktivPRO | aktivDUO | aktivDBS | aktivLEC
+      aktivAvansertBehandling = .data$aktivAPO | .data$aktivPRO | .data$aktivDUO | .data$aktivDBS | .data$aktivLEC
     )
 
   RegData <- RegData |>
