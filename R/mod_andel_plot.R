@@ -8,14 +8,14 @@
   "Tatt PET"       = "PS_DIAG_PET",
   "Tatt bilde"     =  "tattBilde",
   "Oppdatert behandling" = "oppdatertBehandling",
-  "APO"            = "mottattAPOPasient",
-  "DUO"            = "mottattDUOPasient",
-  "DBS"            = "mottattDBSPasient",
-  "Lec"            = "mottattLECPasient",
-  "PRO"            = "mottattPROPasient",
-  "Mottatt avansert behandling" = "mottattAvansertBehandlingPasient",
+  "APO"            = "aktivAPO",
+  "DUO"            = "aktivDUO",
+  "DBS"            = "aktivDBS",
+  "Lec"            = "aktivLEC",
+  "PRO"            = "aktivPRO",
+  "Mottar avansert behandling" = "aktivAvansertBehandling",
   "Standarsisert kartlegging" = "StandardisertKartlegging",
-  "Fornøyd med tilbud fra spesialhelsetjenesten" = "tilfredsSpesialist"
+  "Fornøyd med tilbud fra spesialisthelsetjenesten" = "tilfredsSpesialist"
 )
 
 
