@@ -4,7 +4,6 @@
 #' @return An shiny app ui object
 
 abonnement_ui <- function(id) {
-
   shiny::sidebarLayout(
     shiny::sidebarPanel(
       rapbase::autoReportInput(id)
@@ -16,11 +15,12 @@ abonnement_ui <- function(id) {
 }
 
 abonnement_server <- function(id, user) {
-
   ## nye abonnement
   ## Objects currently shared among subscription and dispathcment
-  orgs <- list(Sykehus1 = 1234,
-               Sykehus2 = 4321)
+  orgs <- list(
+    Sykehus1 = 1234,
+    Sykehus2 = 4321
+  )
   reports <- list(
     Samlerapport1 = list(
       synopsis = "Automatisk samlerapport1",

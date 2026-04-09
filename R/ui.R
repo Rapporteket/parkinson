@@ -4,7 +4,6 @@
 #' @export
 
 app_ui <- function() {
-
   regTitle <- "parkinson"
 
   shiny::tagList(

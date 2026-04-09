@@ -6,7 +6,6 @@
 #' @export
 
 parkGetRegData <- function(datoFra = "1999-01-01", datoTil = "2099-01-01") {
-
   if (rapbase::isRapContext()) {
     bakgrunnSkjema <- rapbase::loadRegData(
       query = "SELECT * FROM bakgrunnskjema_1"

@@ -4,7 +4,6 @@
 #' @return An shiny app ui object
 
 plots_ui <- function(id) {
-
   shiny::sidebarLayout(
     shiny::sidebarPanel(
       width = 3,
@@ -13,8 +12,7 @@ plots_ui <- function(id) {
     ),
     shiny::mainPanel(
       shiny::tabsetPanel(
-        shiny::h3("Plot"
-        )
+        shiny::h3("Plot")
       )
     )
   )
@@ -23,8 +21,6 @@ plots_ui <- function(id) {
 plots_server <- function(id) {
   shiny::moduleServer(
     id,
-    function(input, output, session) {
-
-    }
+    function(input, output, session) {}
   )
 }

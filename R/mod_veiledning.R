@@ -59,7 +59,7 @@ info_server <- function(id, user, data) {
           "<li>Overvåke og forbedre kvaliteten på diagnostikk og behandling av pasienter med parkinsonisme</li>",
           "<li>Kartlegge variasjon i utredning, behandling og oppfølging mellom sykehus og helseregioner</li>",
           "<li>Bidra til forskning og kunnskapsutvikling innen Parkinsons sykdom</li>",
-          "<li>Gi grunnlag for pasientrapporterte utfallsmål (PROM) for å 
+          "<li>Gi grunnlag for pasientrapporterte utfallsmål (PROM) for å
           måle pasientenes egen opplevelse av sykdom og behandling</li>",
           "<li>Sikre likeverdig helsetilbud uavhengig av bosted</li>",
           "</ul>",

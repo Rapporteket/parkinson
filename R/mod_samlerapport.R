@@ -50,32 +50,39 @@ samlerapport_server <- function(id) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       # Samlerapport
       ## vis
       output$samlerapport <- shiny::renderUI({
         rapbase::renderRmd(
           system.file("samlerapport.Rmd", package = "parkinson"),
           outputType = "html_fragment",
-          params = list(type = "html",
-                        var = input$varS,
-                        bins = input$binsS)
+          params = list(
+            type = "html",
+            var = input$varS,
+            bins = input$binsS
+          )
         )
       })
 
       ## last ned
       output$downloadSamlerapport <- shiny::downloadHandler(
         filename = function() {
-          basename(tempfile(pattern = "parkinsonSamlerapport",
-                            fileext = paste0(".", input$formatS)))
+          basename(tempfile(
+            pattern = "parkinsonSamlerapport",
+            fileext = paste0(".", input$formatS)
+          ))
         },
         content = function(file) {
           srcFile <-
             normalizePath(system.file("samlerapport.Rmd", package = "parkinson"))
-          fn <- rapbase::renderRmd(srcFile, outputType = input$formatS,
-                                   params = list(type = input$formatS,
-                                                 var = input$varS,
-                                                 bins = input$binsS))
+          fn <- rapbase::renderRmd(srcFile,
+            outputType = input$formatS,
+            params = list(
+              type = input$formatS,
+              var = input$varS,
+              bins = input$binsS
+            )
+          )
           file.rename(fn, file)
         }
       )
