@@ -8,13 +8,14 @@
   "Tatt PET"       = "PS_DIAG_PET",
   "Tatt bilde"     =  "tattBilde",
   "Oppdatert behandling" = "oppdatertBehandling",
-  "APO"            = "PS_APO",
-  "DUO"            = "PS_DUO",
-  "DBS"            = "PS_DBS",
-  "Lec"            = "PS_LEC",
+  "Apomorfin"            = "aktivAPO",
+  "Duodopa"            = "aktivDUO",
+  "DBS"            = "aktivDBS",
+  "Lecigon"            = "aktivLEC",
+  "Produodopa"            = "aktivPRO",
+  "Mottar avansert behandling" = "aktivAvansertBehandling",
   "Standarsisert kartlegging" = "StandardisertKartlegging",
-  "Mottatt avansert behandling" = "mottattAvansertBehandling",
-  "Fornøyd med tilbud fra spesialhelsetjenesten" = "tilfredsSpesialist"
+  "Fornøyd med tilbud fra spesialisthelsetjenesten" = "tilfredsSpesialist"
 )
 
 
@@ -130,7 +131,6 @@ mod_andeler_server <- function(id, inputData) {
           "etter", bins_label,
           "med mer enn", 10, "registreringer"
         )
-
         PlotAndelerGrVar(
           RegData = data,
           Variabel = data[[var]],
