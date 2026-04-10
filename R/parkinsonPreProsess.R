@@ -39,8 +39,9 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
 
   RegData <- RegData |>
     dplyr::group_by(.data$PasientGUID) |>
-    dplyr::mutate(alive = !any(!is.na(.data$DeathDate))) |>
+    dplyr::mutate(alive = all(is.na(.data$DeathDate))) |>
     dplyr::ungroup()
+
 
   RegData <- RegData |>
     dplyr::mutate(
