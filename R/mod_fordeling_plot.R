@@ -102,7 +102,6 @@ mod_fordeling_plot_server <- function(id, data) {
     id,
     function(input, output, session) {
       data_reactive <- shiny::reactive({
-        
 
         if (input$tab == "Meds") {
           plotData <- data |>
