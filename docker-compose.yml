@@ -13,7 +13,7 @@ x-environment: &environment
 
 services:
   db:
-    image: mysql:8
+    image: mysql:9
     restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -21,7 +21,7 @@ services:
       - ./dev/db:/docker-entrypoint-initdb.d
 
   mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2025-latest
     platform: "linux/amd64"
     environment:
       MSSQL_SA_PASSWORD: "Your_password123"
