@@ -8,7 +8,6 @@
 #' @export
 
 app_server <- function(input, output, session) {
-
   # data.frame som mapper ReshID og sykehusnavn
   map_orgname <- data.frame(
     UnitId = c(111, 222, 333),
@@ -70,7 +69,8 @@ app_server <- function(input, output, session) {
   #################
 
   shiny::observeEvent(
-    shiny::req(user$role()), {
+    shiny::req(user$role()),
+    {
       if (user$role() != "SC") {
         message("Removing dispatchment tab for user with role ", user$role())
         shiny::removeTab("tabs", target = "Utsending")

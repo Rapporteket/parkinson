@@ -1,18 +1,16 @@
-
-
 .private <- new.env(parent = emptyenv())
 .private$andVarChoices <- c(
-  "Tatt CT"        = "PS_DIAG_CT",
-  "Tatt MR"        = "PS_DIAG_MR",
-  "Tatt DAT"       = "PS_DIAG_DAT",
-  "Tatt PET"       = "PS_DIAG_PET",
-  "Tatt bilde"     =  "tattBilde",
+  "Tatt CT" = "PS_DIAG_CT",
+  "Tatt MR" = "PS_DIAG_MR",
+  "Tatt DAT" = "PS_DIAG_DAT",
+  "Tatt PET" = "PS_DIAG_PET",
+  "Tatt bilde" = "tattBilde",
   "Oppdatert behandling" = "oppdatertBehandling",
-  "Apomorfin"            = "aktivAPO",
-  "Duodopa"            = "aktivDUO",
-  "DBS"            = "aktivDBS",
-  "Lecigon"            = "aktivLEC",
-  "Produodopa"            = "aktivPRO",
+  "Apomorfin" = "aktivAPO",
+  "Duodopa" = "aktivDUO",
+  "DBS" = "aktivDBS",
+  "Lecigon" = "aktivLEC",
+  "Produodopa" = "aktivPRO",
   "Mottar avansert behandling" = "aktivAvansertBehandling",
   "Standarsisert kartlegging" = "StandardisertKartlegging",
   "Fornøyd med tilbud fra spesialisthelsetjenesten" = "tilfredsSpesialist"
@@ -20,7 +18,7 @@
 
 
 .private$andBinChoices <- c(
-  "Sykehus"    = "HealthUnitName",
+  "Sykehus" = "HealthUnitName",
   "Kjønn" = "PatientGender",
   "RHF" = "RHF"
 )
@@ -42,9 +40,7 @@ mod_andeler_ui <- function(id) {
   ns <- shiny::NS(id)
 
 
-
   shiny::tagList(
-
     "Andel basert på variabel og grenser",
     shiny::sidebarLayout(
       shiny::sidebarPanel(
@@ -96,14 +92,12 @@ mod_andeler_server <- function(id, inputData) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       data_reactive <- shiny::reactive({
         inputData$RegData
       })
       e_prom_reactive <- shiny::reactive({
         inputData$promData
       })
-
 
 
       plotReactive <- shiny::reactive({
@@ -123,7 +117,7 @@ mod_andeler_server <- function(id, inputData) {
           datoTil = input$datoRange[2]
         )
 
-        var_label  <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
+        var_label <- names(.private$andVarChoices)[.private$andVarChoices == input$varS]
         bins_label <- names(.private$andBinChoices)[.private$andBinChoices == input$binsS]
 
         tittel <- paste(
