@@ -102,17 +102,19 @@ mod_fordeling_plot_server <- function(id, data) {
     id,
     function(input, output, session) {
       data_reactive <- shiny::reactive({
-        plotData <- data |>
-          dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
 
         if (input$tab == "Meds") {
+          plotData <- data |>
+            dplyr::distinct(.data$PasientGUID, .data$HealthUnitName, .keep_all = TRUE) |>
+            dplyr::filter(!is.na(.data$HealthUnitName))
           plotData <- plotData |>
-            dplyr::filter(.data$alive == TRUE) |>
             filtrerAlderIntervall(
               input$alder_var[1],
               input$alder_var[2]
             )
         } else if (input$tab == "Age") {
+          plotData <- data |>
+            dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
           shiny::req(input$diagnose_var, input$age_var)
           plotData <- plotData |>
             dplyr::filter(
