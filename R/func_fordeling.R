@@ -10,21 +10,21 @@
 #' @export
 
 plotMedFordeling <- function(data, fordelingsVariabel) {
-  medKolonner <- c("PS_APO", "PS_DUO", "PS_DBS", "PS_LEC", "PS_PRO")
+  medKolonner <- c("aktivAPO", "aktivDUO", "aktivDBS", "aktivLEC", "aktivPRO")
 
   medNavn <- c(
-    PS_APO = "Apomorfin",
-    PS_DUO = "Duodopa",
-    PS_DBS = "DBS",
-    PS_LEC = "LEC",
-    PS_PRO = "Produodopa"
+    aktivAPO = "Apomorfin",
+    aktivDUO = "Duodopa",
+    aktivDBS = "DBS",
+    aktivLEC = "Lecigon",
+    aktivPRO = "Produodopa"
   )
 
   colors <- c(
     Apomorfin = "#c6dbef",
     Duodopa = "#6baed6",
     DBS = "#4292c6",
-    LEC = "#2171b5",
+    Lecigon = "#2171b5",
     Produodopa = "#084594"
   )
 
@@ -58,7 +58,13 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
         "<br>Andel: ", scales::percent(.data$prop, accuracy = 0.1)
       )
     ) |>
-    dplyr::ungroup()
+    dplyr::ungroup() |>
+    dplyr::mutate(
+      group = factor(
+        .data$group,
+        levels = c(sort(unique(.data$group[.data$group != "Hele landet"])), "Hele landet")
+      )
+    )
 
   ggplot2::ggplot(
     data_plot,
@@ -81,8 +87,8 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
       drop = FALSE
     ) +
     ggplot2::labs(
-      y = "Andel av total medisinsk bruk",
-      fill = "Medisin:"
+      y = "Andel av total behandling",
+      fill = "Behandlingstype:"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
