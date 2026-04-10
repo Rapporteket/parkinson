@@ -1,5 +1,3 @@
-
-
 #' @title PlotAndelerGrVar
 #' @description This function generates a plot for group-specific
 #'   proportions or distributions based on the provided registry data.
@@ -47,8 +45,8 @@
 #' @export
 
 
-
-PlotAndelerGrVar <- function(RegData,
+PlotAndelerGrVar <- function(
+  RegData,
   Variabel,
   grVar = "ShNavn",
   hovedgrTxt = "Total andel",
@@ -65,17 +63,18 @@ PlotAndelerGrVar <- function(RegData,
   axisTextSize = 12,
   nTicks = 5
 ) {
-  offAlleFarger <- c("#c6dbef", "#6baed6", "#4292c6", "#2171b5", "#084594", "#000059",
-                     "#FF7260", "#4D4D4D", "#737373", "#A6A6A6", "#DADADA")
-  farger <- switch(
-    fargepalett,
+  offAlleFarger <- c(
+    "#c6dbef", "#6baed6", "#4292c6", "#2171b5", "#084594", "#000059",
+    "#FF7260", "#4D4D4D", "#737373", "#A6A6A6", "#DADADA"
+  )
+  farger <- switch(fargepalett,
     BlaaOff = offAlleFarger[rev(c(1, 2, 4, 5))],
     BlaaOffAlle = offAlleFarger[6:1],
     StotteOff = offAlleFarger[7:11],
     offAlleFarger = offAlleFarger
   )
 
-  dummy0 <- NA  # -0.001
+  dummy0 <- NA # -0.001
 
   N <- nrow(RegData)
   Variabel <- as.numeric(Variabel)
@@ -83,17 +82,17 @@ PlotAndelerGrVar <- function(RegData,
 
   # Gruppestørrelser og summer per gruppe
   if (N > 0) {
-    Ngr  <- table(RegData[, grVar])
+    Ngr <- table(RegData[, grVar])
     Nvar <- tapply(Variabel, RegData[, grVar], sum, na.rm = TRUE)
   } else {
-    Ngr  <- table(factor(character(0)))
+    Ngr <- table(factor(character(0)))
     Nvar <- numeric(0)
   }
   # Andeler per gruppe (i %), og hvilke grupper som er under grense
   AndelerGr <- round(100 * Nvar / Ngr, 2)
 
   indGrUt <- which(Ngr < Ngrense)
-  AntGr   <- sum(Ngr >= Ngrense)
+  AntGr <- sum(Ngr >= Ngrense)
 
   # Sett under-grense til dummy0 (NA)
   if (length(indGrUt) > 0) {
@@ -112,7 +111,7 @@ PlotAndelerGrVar <- function(RegData,
   # Aggregerte verdier
   AggVerdier <- list(Hoved = NULL, Tot = NULL)
   AggVerdier$Hoved <- AndelerGr[sortInd]
-  AggVerdier$Tot   <- if (N > 0) round(100 * sum(Variabel, na.rm = TRUE) / N, 2) else NA_real_
+  AggVerdier$Tot <- if (N > 0) round(100 * sum(Variabel, na.rm = TRUE) / N, 2) else NA_real_
   # Sorterte gruppenavn med N-tekst
   GrNavnSort <- paste0(names(Ngr)[sortInd], " (", Ngrtxt[sortInd], ")")
 
@@ -124,17 +123,16 @@ PlotAndelerGrVar <- function(RegData,
 
 
   if (all(is.na(Ngr))) {
-
     tekst <- "Ingen registrerte data for dette utvalget"
 
     p <- ggplot2::ggplot() +
       ggplot2::theme_void() +
       ggplot2::labs(title = tittel) +
       ggplot2::annotate("text", x = 0, y = 0, label = tekst, size = 5) +
-      ggplot2::annotate("text", x = 0, y = -0.2, label = paste(utvalgTxt, collapse = "\n"),
-                        size = 3.5, color = farger[1])
-
-
+      ggplot2::annotate("text",
+        x = 0, y = -0.2, label = paste(utvalgTxt, collapse = "\n"),
+        size = 3.5, color = farger[1]
+      )
   } else if (max(Ngr, na.rm = TRUE) < Ngrense) {
     tekst <- paste0("Færre enn ", Ngrense, " registreringer i alle grupper for dette utvalget")
 
@@ -142,10 +140,10 @@ PlotAndelerGrVar <- function(RegData,
       ggplot2::theme_void() +
       ggplot2::labs(title = tittel) +
       ggplot2::annotate("text", x = 0, y = 0, label = tekst, size = 5) +
-      ggplot2::annotate("text", x = 0, y = -0.2, label = paste(utvalgTxt, collapse = "\n"),
-                        size = 3.5)
-
-
+      ggplot2::annotate("text",
+        x = 0, y = -0.2, label = paste(utvalgTxt, collapse = "\n"),
+        size = 3.5
+      )
   } else {
     # 1) AndelerPlot (NA → 0 kun for plotting, ggplot fjerner NA verdier)
     andeler <- as.numeric(AggVerdier$Hoved)
@@ -153,8 +151,8 @@ PlotAndelerGrVar <- function(RegData,
 
     # 2) Datasett til ggplot
     ggDataFrame <- data.frame(
-      andelProsent = andeler,      # ekte verdi (kan være NA)
-      andelerPlot  = andelerPlot,  # brukt til stolpehøyde
+      andelProsent = andeler, # ekte verdi (kan være NA)
+      andelerPlot  = andelerPlot, # brukt til stolpehøyde
       gruppeNavn   = as.character(GrNavnSort),
       andelTekst   = as.character(andeltxt)
     )
@@ -189,8 +187,7 @@ PlotAndelerGrVar <- function(RegData,
     # 5) Kvalitetsindikator: Bakgrunnsbånd basert på kvalitetsgrenser
     visKvalIndGrenser <- any(kvalIndGrenser > 0, na.rm = TRUE)
 
-    kvalIndLegend <- switch(
-      bestKvalInd,
+    kvalIndLegend <- switch(bestKvalInd,
       "høy" = c("Lav", "Middels", "Høy"),
       "lav" = c("Høy", "Middels", "Lav")
     )
@@ -201,7 +198,6 @@ PlotAndelerGrVar <- function(RegData,
     names(kvalIndFarger) <- kvalIndLegend
 
     if (visKvalIndGrenser) {
-
       # Sikre at grensene er numeriske, sorterte og gyldige
       kvalBreaks <- sort(as.numeric(kvalIndGrenser))
       stopifnot(length(kvalBreaks) == 4, all(diff(kvalBreaks) > 0))
@@ -233,8 +229,10 @@ PlotAndelerGrVar <- function(RegData,
       p <- p +
         ggplot2::geom_rect(
           data = indikatorBand,
-          ggplot2::aes(xmin = .data$xmin, xmax = .data$xmax,
-                       ymin = .data$ymin, ymax = .data$ymax, fill = .data$indLevels),
+          ggplot2::aes(
+            xmin = .data$xmin, xmax = .data$xmax,
+            ymin = .data$ymin, ymax = .data$ymax, fill = .data$indLevels
+          ),
           inherit.aes = FALSE,
           alpha = 0.20
         ) +
@@ -298,8 +296,8 @@ PlotAndelerGrVar <- function(RegData,
         panel.grid = ggplot2::element_blank(),
         plot.margin = ggplot2::margin(r = 50, l = 20, t = 15, b = 15),
         axis.ticks.x = ggplot2::element_line(color = "black"),
-        axis.line.x  = ggplot2::element_line(color = "black"),
-        axis.line.y  = ggplot2::element_line(color = "black"),
+        axis.line.x = ggplot2::element_line(color = "black"),
+        axis.line.y = ggplot2::element_line(color = "black"),
         legend.position = "top",
         legend.justification = "center",
         legend.text = ggplot2::element_text(size = legendSize),
@@ -309,5 +307,4 @@ PlotAndelerGrVar <- function(RegData,
       )
   }
   return(p)
-
 }

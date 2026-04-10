@@ -8,10 +8,8 @@ mod_over_tid_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
-
       shiny::sidebarPanel(
         width = 3,
-
         shiny::tagList(
           shiny::selectInput(
             inputId = ns("sorting"),
@@ -22,7 +20,6 @@ mod_over_tid_ui <- function(id) {
           shiny::uiOutput(ns("unit_ui"))
         )
       ),
-
       shiny::mainPanel(
         shiny::tabsetPanel(
           id = ns("tab"),
@@ -43,18 +40,16 @@ mod_over_tid_ui <- function(id) {
 }
 
 
-
-#'@title Server over tid
-#'@param id Character string module namespace
-#'@param data Data frame with the data to be used in the plot
+#' @title Server over tid
+#' @param id Character string module namespace
+#' @param data Data frame with the data to be used in the plot
 #'
-#'@export
+#' @export
 
 mod_over_tid_server <- function(id, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       data_filtered <- shiny::reactive({
         shiny::req(input$sorting)
 
@@ -78,8 +73,7 @@ mod_over_tid_server <- function(id, data) {
           return(NULL)
         }
 
-        unitChoices <- switch(
-          input$sorting,
+        unitChoices <- switch(input$sorting,
           "Sykehus" = sort(unique(data$HealthUnitName)),
           "Region" = sort(unique(data$RHF))
         )
@@ -102,7 +96,7 @@ mod_over_tid_server <- function(id, data) {
           plotly::config(displayModeBar = FALSE)
       })
       # Lag nedlastning
-      output$nedlastning_over_tid_plot <-  shiny::downloadHandler(
+      output$nedlastning_over_tid_plot <- shiny::downloadHandler(
         filename = function() {
           paste("plot_over_tid", Sys.Date(), ".pdf", sep = "")
         },
