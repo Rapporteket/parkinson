@@ -38,7 +38,10 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
   RegData$PatientGender <- factor(RegData$PatientGender, levels = c(0, 1, 2), labels = c("Ukjent", "Mann", "Kvinne"))
 
   RegData <- RegData |>
-    dplyr::mutate(alive = is.na(.data$DeathDate))
+    dplyr::group_by(.data$PasientGUID) |>
+    dplyr::mutate(alive = !any(!is.na(.data$DeathDate))) |>
+    dplyr::ungroup()
+
   RegData <- RegData |>
     dplyr::mutate(
       deathAge = .data$PatientAge +
