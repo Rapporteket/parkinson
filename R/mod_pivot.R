@@ -9,7 +9,8 @@ pivot_ui <- function(id) {
 
   shiny::tagList(
     shiny::fluidRow(
-      shiny::column(12,
+      shiny::column(
+        12,
         rpivotTable::rpivotTableOutput(ns("pivotSurvey"))
       )
     )
@@ -28,7 +29,6 @@ pivot_server <- function(data, id, user) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       regData <- shiny::reactiveVal(data.frame())
 
       shiny::observeEvent(user$role(), {

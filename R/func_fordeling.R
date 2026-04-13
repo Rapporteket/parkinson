@@ -3,7 +3,6 @@
 # Standard filtreringsfunksjon
 
 
-
 #' Preprosessering
 #' @param data Data frame med data for plottene
 #' @param fordelingsVariabel Variabelen som skal brukes for å gruppere dataene i plottene
@@ -11,7 +10,6 @@
 #' @export
 
 plotMedFordeling <- function(data, fordelingsVariabel) {
-
   medKolonner <- c("PS_APO", "PS_DUO", "PS_DBS", "PS_LEC", "PS_PRO")
 
   medNavn <- c(
@@ -106,7 +104,6 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
 }
 
 makeAgeDistributionPlot <- function(data, ageCol, genderCol) {
-
   fillColors <- c(
     "#4292c6",
     "#2171b5"

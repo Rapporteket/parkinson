@@ -14,7 +14,6 @@ mod_fordeling_plot_ui <- function(id) {
         shiny::conditionalPanel(
           condition = "input.tab == 'Meds'",
           ns = ns,
-
           shiny::selectInput(
             inputId = ns("x_var"),
             label = "Variabel:",
@@ -24,7 +23,6 @@ mod_fordeling_plot_ui <- function(id) {
             ),
             selected = "HealthUnitName"
           ),
-
           shiny::sliderInput(
             inputId = ns("alder_var"),
             label = "Aldersintervall:",
@@ -57,7 +55,6 @@ mod_fordeling_plot_ui <- function(id) {
           )
         )
       ),
-
       shiny::mainPanel(
         shiny::tabsetPanel(
           id = ns("tab"),
@@ -163,7 +160,7 @@ mod_fordeling_plot_server <- function(id, data) {
       })
 
       # Lag nedlastning plot
-      output$nedlastning_fordeling_plot_meds <-  shiny::downloadHandler(
+      output$nedlastning_fordeling_plot_meds <- shiny::downloadHandler(
         filename = function() {
           paste("plot_fordeling_meds", Sys.Date(), ".pdf", sep = "")
         },
@@ -173,7 +170,7 @@ mod_fordeling_plot_server <- function(id, data) {
           dev.off()
         }
       )
-      output$nedlastning_fordeling_plot_alder <-  shiny::downloadHandler(
+      output$nedlastning_fordeling_plot_alder <- shiny::downloadHandler(
         filename = function() {
           paste("plot_fordeling_alder", Sys.Date(), ".pdf", sep = "")
         },
@@ -183,7 +180,6 @@ mod_fordeling_plot_server <- function(id, data) {
           dev.off()
         }
       )
-
     }
   )
 }

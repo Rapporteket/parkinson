@@ -9,11 +9,10 @@ info_ui <- function(id) {
 
   shiny::mainPanel(
     width = 12,
-    shiny::h2("Brukerinformasjon"),
-    shiny::uiOutput(ns("user_info"), inline = TRUE),
+    shiny::uiOutput(ns("generalInfo")),
     shiny::hr(),
-    shiny::h2("Rendering av Rmarkdown-fil"),
-    shiny::uiOutput(ns("info"), inline = TRUE),
+    shiny::uiOutput(ns("info")),
+    shiny::h3("Registreringer per måned siste år"),
     plotly::plotlyOutput(ns("infoPlot"))
   )
 }
@@ -29,51 +28,49 @@ info_server <- function(id, user, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-      output$user_info <- shiny::renderUI({
-        shiny::tagList(
-          shiny::p(
-            "Informasjon om pålogget bruker fra variabelen ",
-            shiny::code("user"),
-            ", som defineres av shiny-modulen",
-            shiny::code("rapbase::navbarWidgetServer2"),
-            "."
-          ),
-          shiny::p(
-            "Brukernavn (user$name(), hentet fra miljøvariabelen SHINYPROXY_USERNAME): ",
-            shiny::strong(user$name()),
-            shiny::br(),
-            "Navn (user$fullName(), hentet fra miljøvariabelen FALK_USER_FULLNAME): ",
-            shiny::strong(user$fullName()),
-            shiny::br(),
-            "Epost (user$email(), hentet fra miljøvariabelen FALK_USER_EMAIL): ",
-            shiny::strong(user$email()),
-            shiny::br(),
-            "Telefonnummer (user$phone(), hentet fra miljøvariabelen FALK_USER_PHONE): ",
-            shiny::strong(user$phone()),
-            shiny::br(),
-            "ReshID (user$org(), valgt i meny): ",
-            shiny::strong(user$org()),
-            shiny::br(),
-            "Enhetsnavn (user$orgName(), hvis mapping mellom ReshID og sykehusnavn er ok): ",
-            shiny::strong(user$orgName()),
-            shiny::br(),
-            "Rolle (user$role(), valgt i meny): ",
-            shiny::strong(user$role())
-          )
+      promData <- data$promData
+      RegData <- data$RegData
+
+      # Info
+      output$info <- shiny::renderText({
+        nProm <- nrow(promData)
+        nBakgrunn <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 1))
+        nKonsultasjon <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 2))
+        paste0(
+          "<h3>Antall skjema</h3>",
+          "<p>Oversikt over antall skjema som er registrert i systemet. ",
+          "Denne informasjonen kan brukes til å holde oversikt over registreringsstatus ",
+          "og fullstendighet i datainnsamlingen.</p>",
+          "<ul>",
+          "<li><b>Antall PROM-skjema:</b> ", nProm, "</li>",
+          "<li><b>Antall bakgrunnsskjema:</b> ", nBakgrunn, "</li>",
+          "<li><b>Antall konsultasjonsskjema:</b> ", nKonsultasjon, "</li>",
+          "</ul>"
         )
       })
 
-      # Info
-      output$info <- shiny::renderUI({
-        rapbase::renderRmd(
-          system.file("info.Rmd", package = "parkinson"),
-          outputType = "html_fragment",
-          params = list(data = data)
+      output$generalInfo <- shiny::renderText({
+        paste0(
+          "<h3>Om Parkinsonregisteret</h3>",
+          "<p>Parkinsonregisteret er et nasjonalt kvalitetsregister som samler inn data ",
+          "om pasienter med Parkinsons sykdom og andre parkinsonistiske tilstander i Norge. ",
+          "Registeret brukes til å:</p>",
+          "<ul>",
+          "<li>Overvåke og forbedre kvaliteten på diagnostikk og behandling av pasienter med parkinsonisme</li>",
+          "<li>Kartlegge variasjon i utredning, behandling og oppfølging mellom sykehus og helseregioner</li>",
+          "<li>Bidra til forskning og kunnskapsutvikling innen Parkinsons sykdom</li>",
+          "<li>Gi grunnlag for pasientrapporterte utfallsmål (PROM) for å
+          måle pasientenes egen opplevelse av sykdom og behandling</li>",
+          "<li>Sikre likeverdig helsetilbud uavhengig av bosted</li>",
+          "</ul>",
+          "<p>Rapporteket gir tilgang til oppdaterte oversikter, figurer og tabeller basert på data fra registeret, ",
+          "og er et viktig verktøy for kvalitetsforbedringsarbeid lokalt og nasjonalt.</p>"
         )
       })
+
       output$infoPlot <- plotly::renderPlotly({
         p <- makeMonthlyColPlot(
-          data = data,
+          data = RegData,
           dateCol = "FormDate",
           fillCol = "RHF",
           yearsBack = 1

@@ -7,7 +7,6 @@
 #' @export
 
 run_app <- function(browser = FALSE, logAsJson = FALSE) {
-
   if (logAsJson) {
     rapbase::loggerSetup()
   }

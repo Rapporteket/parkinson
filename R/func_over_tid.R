@@ -1,4 +1,3 @@
-
 #' Lager et søylediagram som viser antall registreringer per år
 #' @param data RegData-datasettet"
 #' @return ggplot-objekt
