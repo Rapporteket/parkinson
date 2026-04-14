@@ -17,21 +17,27 @@ mod_over_tid_ui <- function(id) {
             choices = c("Hele landet", "Sykehus", "Region"),
             selected = "Hele landet"
           ),
-          shiny::uiOutput(ns("unit_ui"))
+          shiny::uiOutput(ns("unit_ui")),
+          shiny::uiOutput(ns("tabell_ui"))
         )
       ),
       shiny::mainPanel(
+        shiny::h3("Utvikling over tid"),
         shiny::tabsetPanel(
           id = ns("tab"),
           shiny::tabPanel(
             "Figur",
             value = "Fig",
-            shiny::h3("Antall registreringer over tid"),
             plotly::plotlyOutput(outputId = ns("over_tid_plot")),
             shiny::downloadButton(
               ns("nedlastning_over_tid_plot"),
               "Last ned figur"
             )
+          ),
+          shiny::tabPanel(
+            "Tabell",
+            value = "Tab",
+            DT::DTOutput(outputId = ns("tabell_over_tid"))
           )
         )
       )
@@ -73,6 +79,8 @@ mod_over_tid_server <- function(id, data) {
           return(NULL)
         }
 
+
+
         unitChoices <- switch(input$sorting,
           "Sykehus" = sort(unique(data$HealthUnitName)),
           "Region" = sort(unique(data$RHF))
@@ -85,9 +93,27 @@ mod_over_tid_server <- function(id, data) {
           selected = unitChoices[1]
         )
       })
-
+      output$tabell_ui <- shiny::renderUI({
+        shiny::selectInput(
+          inputId = shiny::NS(id, "table_select"),
+          label = "Velg tabell:",
+          choices = c(
+            "Nye registreringer per år" = "registreringer",
+            "Antall pasienter i live ved slutten av året" = "pasienter_i_live",
+            "Gjennomsnittsalder for nye pasienter per år" = "alder_nye_pasienter",
+            "Antall dødsfall blant pasienter per år" = "antallDodsfall"
+          ),
+          selected = "registreringer"
+        )
+      })
       plot_over_tid_reactive <- shiny::reactive({
-        makeYearCountPlot(data_filtered())
+        shiny::req(input$table_select, data_filtered())
+        makeYearCountStackedPlot(data_filtered(), varChoice = input$table_select)
+      })
+
+      output$tabell_over_tid <- DT::renderDT({
+        shiny::req(input$table_select, data_filtered())
+        makeYearCountTable(data_filtered(), varChoice = input$table_select)
       })
 
       output$over_tid_plot <- plotly::renderPlotly({
@@ -95,6 +121,7 @@ mod_over_tid_server <- function(id, data) {
           plotly::ggplotly(tooltip = "text") |>
           plotly::config(displayModeBar = FALSE)
       })
+
       # Lag nedlastning
       output$nedlastning_over_tid_plot <- shiny::downloadHandler(
         filename = function() {
