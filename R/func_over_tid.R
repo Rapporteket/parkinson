@@ -8,7 +8,9 @@ makeYearCountTable <- function(data, varChoice) {
     "registreringer" = "Nye registreringer per år",
     "pasienter_i_live" = "Antall pasienter i live ved slutten av året",
     "alder_nye_pasienter" = "Gjennomsnittsalder for nye pasienter per år",
-    "antallDodsfall" = "Antall dødsfall blant pasienter per år"
+    "antallDodsfall" = "Antall dødsfall blant pasienter per år",
+    "alder_pasienter_i_live" = "Gjennomsnittsalder
+    for pasienter i live ved slutten av året"
   )
   title <- choices[[varChoice]]
 
@@ -37,14 +39,16 @@ makeYearCountStackedPlot <- function(data, varChoice) {
     "registreringer" = "Nye registreringer per år",
     "pasienter_i_live" = "Antall pasienter i live ved slutten av året",
     "alder_nye_pasienter" = "Gjennomsnittsalder for nye pasienter per år",
-    "antallDodsfall" = "Antall dødsfall blant pasienter per år"
+    "antallDodsfall" = "Antall dødsfall blant pasienter per år",
+    "alder_pasienter_i_live" = "Gjennomsnittsalder
+    for pasienter i live ved slutten av året"
   )
   title <- choices[[varChoice]]
 
   tabellData <- lagSummaryTable(data, varChoice) |>
     dplyr::filter(.data$gruppe != "alle") |>
     tidyr::pivot_longer(
-      cols = -.data$gruppe,
+      cols = -tidyselect::all_of("gruppe"),
       names_to = "year",
       values_to = "n"
     ) |>
@@ -53,13 +57,19 @@ makeYearCountStackedPlot <- function(data, varChoice) {
       year = factor(.data$year)
     )
 
-  position <- if (varChoice == "alder_nye_pasienter") {
+  position <- if (varChoice %in% c(
+    "alder_nye_pasienter",
+    "alder_pasienter_i_live"
+  )) {
     ggplot2::position_dodge(width = 0.8)
   } else {
     ggplot2::position_stack()
   }
 
-  value_label <- if (varChoice == "alder_nye_pasienter") "Alder" else "Antall"
+  value_label <- if (varChoice %in% c(
+    "alder_nye_pasienter",
+    "alder_pasienter_i_live"
+  )) "Alder" else "Antall"
 
   ggplot2::ggplot(
     tabellData,
@@ -155,6 +165,27 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
     data |>
       dplyr::mutate(year = as.integer(format(.data[["FormDate"]], "%Y"))) |>
       dplyr::filter(.data$year %in% years) |>
+      dplyr::group_by(.data$year) |>
+      dplyr::summarise(
+        alle = mean(
+          .data$PatientAge[.data$ICD_10 == "G20" | .data$atypiskDiag], na.rm = TRUE
+        ),
+        G20 = mean(.data$PatientAge[.data$ICD_10 == "G20"], na.rm = TRUE),
+        Atypisk = mean(.data$PatientAge[.data$atypiskDiag], na.rm = TRUE),
+        .groups = "drop"
+      ) |>
+      dplyr::mutate(dplyr::across(c("alle", "G20", "Atypisk"), \(x) round(x, 1))) |>
+      reshape_output()
+
+  } else if (varChoice == "alder_pasienter_i_live") {
+    data |>
+      dplyr::select("PasientGUID", "ICD_10", "atypiskDiag", "FormDate", "DeathDate", "PatientAge") |>
+      dplyr::distinct() |>
+      tidyr::crossing(year = years) |>
+      dplyr::filter(
+        .data$FormDate <= as.Date(paste0(.data$year, "-12-31")),
+        is.na(.data$DeathDate) | .data$DeathDate >= as.Date(paste0(.data$year, "-12-31"))
+      ) |>
       dplyr::group_by(.data$year) |>
       dplyr::summarise(
         alle = mean(
