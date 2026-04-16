@@ -9,8 +9,8 @@
 #' @return datasett med norske nivåer og verdier
 #' @export
 
-plotMedFordeling <- function(data, fordelingsVariabel) {
-  medKolonner <- c("aktivAPO", "aktivDUO", "aktivDBS", "aktivLEC", "aktivPRO")
+plotAvBehFordeling <- function(data, fordelingsVariabel) {
+  AvBehKolonner <- c("aktivAPO", "aktivDUO", "aktivDBS", "aktivLEC", "aktivPRO")
 
   medNavn <- c(
     aktivAPO = "Apomorfin",
@@ -30,7 +30,7 @@ plotMedFordeling <- function(data, fordelingsVariabel) {
 
   data_long <- data |>
     tidyr::pivot_longer(
-      cols = dplyr::all_of(medKolonner),
+      cols = dplyr::all_of(AvBehKolonner),
       names_to = "medicine",
       values_to = "used"
     ) |>
