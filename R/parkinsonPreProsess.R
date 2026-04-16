@@ -55,6 +55,17 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
     )
 
   RegData <- RegData |>
+    dplyr::mutate(
+      updatedPatientAge = .data$PatientAge +
+        base::floor(
+          lubridate::time_length(
+            lubridate::interval(.data$FormDate, Sys.Date()),
+            unit = "years"
+          )
+        )
+    )
+
+  RegData <- RegData |>
     dplyr::mutate(atypiskDiag = .data$ICD_10 %in% c("G231", "G232", "G233", "G238", "G239"))
 
   #------- Kaviltetsindikatorer -------
