@@ -18,14 +18,14 @@ mod_over_tid_ui <- function(id) {
             selected = "Hele landet"
           ),
           shiny::uiOutput(ns("unit_ui")),
-              shiny::selectizeInput(
-                inputId = ns("group_choice"),
-                label = "Velg filtre:",
-                choices = c("Kjønn", "Alder"),
-                selected = NULL,
-                multiple = TRUE,
-                options = list(plugins = list("remove_button"))
-              ),
+          shiny::selectizeInput(
+            inputId = ns("group_choice"),
+            label = "Velg filtre:",
+            choices = c("Kjønn", "Alder"),
+            selected = NULL,
+            multiple = TRUE,
+            options = list(plugins = list("remove_button"))
+          ),
           shiny::uiOutput(ns("age_ui")),
           shiny::uiOutput(ns("gender_ui")),
           shiny::uiOutput(ns("tabell_ui"))
@@ -67,48 +67,48 @@ mod_over_tid_server <- function(id, data) {
     id,
     function(input, output, session) {
       data_filtered <- shiny::reactive({
-      shiny::req(input$sorting)
+        shiny::req(input$sorting)
 
-      # First filter by sorting
-      filtered <- if (input$sorting == "Hele landet") {
-        data
-      } else if (input$sorting == "Sykehus") {
-        shiny::req(input$unit)
-        data |>
-        dplyr::filter(.data$HealthUnitName == input$unit)
-      } else if (input$sorting == "Region") {
-        shiny::req(input$unit)
-        data |>
-        dplyr::filter(.data$RHF == input$unit)
-      } else {
-        data
-      }
+        # First filter by sorting
+        filtered <- if (input$sorting == "Hele landet") {
+          data
+        } else if (input$sorting == "Sykehus") {
+          shiny::req(input$unit)
+          data |>
+            dplyr::filter(.data$HealthUnitName == input$unit)
+        } else if (input$sorting == "Region") {
+          shiny::req(input$unit)
+          data |>
+            dplyr::filter(.data$RHF == input$unit)
+        } else {
+          data
+        }
 
-      # Then filter by group choices (multiple selections possible)
-      if ("Kjønn" %in% input$group_choice) {
-        shiny::req(input$gender)
-        filtered <- filtered |>
-        dplyr::filter(.data$PatientGender == input$gender)
-      }
+        # Then filter by group choices (multiple selections possible)
+        if ("Kjønn" %in% input$group_choice) {
+          shiny::req(input$gender)
+          filtered <- filtered |>
+            dplyr::filter(.data$PatientGender == input$gender)
+        }
 
-      if ("Alder" %in% input$group_choice) {
-        shiny::req(input$age)
-        filtered <- filtered |>
-        dplyr::mutate(
-          age_group = dplyr::case_when(
-          .data$updatedPatientAge <= 50 ~ "under_50",
-          .data$updatedPatientAge >= 51 & .data$updatedPatientAge <= 60 ~ "51_60",
-          .data$updatedPatientAge >= 61 & .data$updatedPatientAge <= 70 ~ "61_70",
-          .data$updatedPatientAge >= 71 & .data$updatedPatientAge <= 80 ~ "71_80",
-          .data$updatedPatientAge >= 81 & .data$updatedPatientAge <= 90 ~ "81_90",
-          .data$updatedPatientAge >= 91 ~ "over_90",
-          TRUE ~ NA_character_
-          )
-        ) |>
-        dplyr::filter(.data$age_group == input$age)
-      }
+        if ("Alder" %in% input$group_choice) {
+          shiny::req(input$age)
+          filtered <- filtered |>
+            dplyr::mutate(
+              age_group = dplyr::case_when(
+                .data$updatedPatientAge <= 50 ~ "under_50",
+                .data$updatedPatientAge >= 51 & .data$updatedPatientAge <= 60 ~ "51_60",
+                .data$updatedPatientAge >= 61 & .data$updatedPatientAge <= 70 ~ "61_70",
+                .data$updatedPatientAge >= 71 & .data$updatedPatientAge <= 80 ~ "71_80",
+                .data$updatedPatientAge >= 81 & .data$updatedPatientAge <= 90 ~ "81_90",
+                .data$updatedPatientAge >= 91 ~ "over_90",
+                TRUE ~ NA_character_
+              )
+            ) |>
+            dplyr::filter(.data$age_group == input$age)
+        }
 
-      filtered
+        filtered
       })
 
       output$unit_ui <- shiny::renderUI({
