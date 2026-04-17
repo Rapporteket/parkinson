@@ -6,7 +6,7 @@
 #' @return An object representing the app
 #' @export
 
-run_app <- function(browser = FALSE, logAsJson = FALSE) {
+run_app <- function(browser = FALSE, logAsJson = TRUE) {
   if (logAsJson) {
     rapbase::loggerSetup()
   }
