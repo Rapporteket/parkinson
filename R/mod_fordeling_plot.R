@@ -12,7 +12,7 @@ mod_fordeling_plot_ui <- function(id) {
       shiny::sidebarPanel(
         width = 3,
         shiny::conditionalPanel(
-          condition = "input.tab == 'Meds'",
+          condition = "input.tab == 'AvansertBehandling'",
           ns = ns,
           shiny::selectInput(
             inputId = ns("x_var"),
@@ -60,7 +60,7 @@ mod_fordeling_plot_ui <- function(id) {
           id = ns("tab"),
           shiny::tabPanel(
             "Medisiner",
-            value = "Meds",
+            value = "AvansertBehandling",
             shiny::h3("Fordeling i bruk av medisiner og behandling"),
             plotly::plotlyOutput(
               outputId = ns("fordeling_plot_meds"),
@@ -102,17 +102,19 @@ mod_fordeling_plot_server <- function(id, data) {
     id,
     function(input, output, session) {
       data_reactive <- shiny::reactive({
-        plotData <- data |>
-          dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
 
-        if (input$tab == "Meds") {
+        if (input$tab == "AvansertBehandling") {
+          plotData <- data |>
+            dplyr::distinct(.data$PasientGUID, .data$HealthUnitName, .keep_all = TRUE) |>
+            dplyr::filter(!is.na(.data$HealthUnitName))
           plotData <- plotData |>
-            dplyr::filter(.data$alive == TRUE) |>
             filtrerAlderIntervall(
               input$alder_var[1],
               input$alder_var[2]
             )
         } else if (input$tab == "Age") {
+          plotData <- data |>
+            dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
           shiny::req(input$diagnose_var, input$age_var)
           plotData <- plotData |>
             dplyr::filter(
@@ -126,7 +128,7 @@ mod_fordeling_plot_server <- function(id, data) {
 
       plot_reactive_meds <- shiny::reactive({
         shiny::req(c(input$x_var))
-        plotMedFordeling(
+        plotAvBehFordeling(
           data_reactive(),
           input$x_var
         )
