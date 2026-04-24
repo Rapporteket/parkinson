@@ -5,7 +5,7 @@
   "Tatt DAT" = "PS_DIAG_DAT",
   "Tatt PET" = "PS_DIAG_PET",
   "Tatt bilde" = "tattBilde",
-  "Oppdatert behandling" = "oppdatertBehandling",
+  "Oppdatert status" = "oppdatertStatus",
   "Apomorfin" = "aktivAPO",
   "Duodopa" = "aktivDUO",
   "DBS" = "aktivDBS",

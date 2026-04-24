@@ -104,6 +104,7 @@ mod_fordeling_plot_server <- function(id, data) {
       data_reactive <- shiny::reactive({
 
         if (input$tab == "AvansertBehandling") {
+          # Bruk HF i stedet for HealthUnitName
           plotData <- data |>
             dplyr::distinct(.data$PasientGUID, .data$HealthUnitName, .keep_all = TRUE) |>
             dplyr::filter(!is.na(.data$HealthUnitName))
@@ -113,6 +114,8 @@ mod_fordeling_plot_server <- function(id, data) {
               input$alder_var[2]
             )
         } else if (input$tab == "Age") {
+          # Sørg for at pasienter inkluderes rett
+          # Bruk updatedPatientAge fra nyeste skjema per pasient
           plotData <- data |>
             dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
           shiny::req(input$diagnose_var, input$age_var)
