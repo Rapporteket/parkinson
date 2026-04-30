@@ -43,7 +43,7 @@ plotAvBehFordeling <- function(data, fordelingsVariabel) {
         labels = unname(medNavn)
       )
     )
-
+  # Se nærmere på total_row
   total_row <- data_long |>
     dplyr::mutate(group = "Hele landet")
 

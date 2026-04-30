@@ -135,6 +135,7 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
   }
 
   if (varChoice == "registreringer") {
+    # Kan muligens begrenses til NPR-skjema
     data |>
       dplyr::mutate(year = as.integer(format(.data[["FormDate"]], "%Y"))) |>
       dplyr::filter(.data$year %in% years) |>
@@ -142,6 +143,7 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
       reshape_output()
 
   } else if (varChoice == "pasienter_i_live") {
+    # Bruk alive flag
     data |>
       dplyr::select("PasientGUID", "ICD_10", "atypiskDiag", "FormDate", "DeathDate") |>
       dplyr::distinct() |>
@@ -162,6 +164,8 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
       reshape_output()
 
   } else if (varChoice == "alder_nye_pasienter") {
+    # Hvordan er dette spesifikt for nye pasienter?
+    # Alder ved tidligste formdate per pasient
     data |>
       dplyr::mutate(year = as.integer(format(.data[["FormDate"]], "%Y"))) |>
       dplyr::filter(.data$year %in% years) |>
@@ -178,6 +182,7 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
       reshape_output()
 
   } else if (varChoice == "alder_pasienter_i_live") {
+    # Bruk alive flag og updatedPatientAge
     data |>
       dplyr::select("PasientGUID", "ICD_10", "atypiskDiag", "FormDate", "DeathDate", "PatientAge") |>
       dplyr::distinct() |>
@@ -199,6 +204,9 @@ lagSummaryTable <- function(data, varChoice = "registreringer") {
       reshape_output()
 
   } else if (varChoice == "antallDodsfall") {
+    # Grupper på pasienter for å unngå dobbeltregistrering
+    # Sørg for at deathdate per pasient plukkes opp
+    # Bruk diagnose pasient døde med
     data |>
       dplyr::filter(!is.na(.data$DeathDate)) |>
       dplyr::mutate(year = as.integer(format(.data[["DeathDate"]], "%Y"))) |>
