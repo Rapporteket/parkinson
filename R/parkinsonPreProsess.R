@@ -37,7 +37,8 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
         to_date_ddmmyyyy8
       )
     )
-
+  RegData <- RegData |>
+    dplyr::mutate(HF = stringr::str_sub(.data$HF, end = -4))
   RegData$H_TO_DIAG <- tidsDiffDager(RegData$PS_HDATO, RegData$DIAG_DATO)
 
   # -------- Slutt Dato formatering -------------
@@ -79,8 +80,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
 
   # Mottatt standardisert kartlegging
   RegData <- RegData |>
-    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
-    #PS_MDSUPDRS_III = TRUE hvis tall (Ikke tom)
+    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1 | !is.na(.data$PS_MDSUPDRS_III))
 
   # Tatt bilde
   RegData <- RegData |>
@@ -244,7 +244,8 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
     tattBilde = c(0, 75, 90, 100),
     oppdatertStatus = c(0, 75, 90, 100),
     aktivAvansertBehandling = c(0, 5, 15, 100),
-    StandardisertKartlegging = c(0, 75, 90, 100)
+    StandardisertKartlegging = c(0, 75, 90, 100),
+    tilfredsSpesialist = c(0, 40, 60, 100)
   )
   #-------------------Slutt Kvalitetsindikatorer -------------------
 
@@ -254,21 +255,27 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
   #----------------------------------------------#
   # Må nyanseres per pasient
   # Se på siste svar fra hver pasient
-  promData <- promData |>
+  tilfreds_df <- RegData |>
+    dplyr::filter(.data$FormTypeId == 4) |>
+    dplyr::group_by(.data$PasientGUID) |> # Group by PasientGUID
+    dplyr::filter(
+      .data$FormDate == max(.data$FormDate, na.rm = TRUE),
+    ) |>
     dplyr::mutate(
       tilfredsSpesialist = dplyr::if_else(
         .data$DHT_TILFREDS_SPESIALIST %in% 0:4,
         .data$DHT_TILFREDS_SPESIALIST %in% c(3, 4),
         NA
       )
-    )
-  attr(promData, "kvalIndGrenser") <- list(
-    tilfredsSpesialist = c(0, 40, 60, 100)
-  )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::select(.data$PasientGUID, .data$tilfredsSpesialist)
+
+    
+
+  RegData <- RegData |>
+    dplyr::left_join(tilfreds_df, by = "PasientGUID")
   #------------ Slutt ePromSkjema ---------------#
 
-  return(list(
-    RegData = RegData,
-    promData = promData
-  ))
+  return(RegData)
 }

@@ -76,7 +76,10 @@ mod_andeler_ui <- function(id) {
         )
       ),
       shiny::mainPanel(
-        shiny::plotOutput(outputId = shiny::NS(id, "andelPlot"))
+        shiny::plotOutput(
+          outputId = ns("andelPlot"),
+          height = "600px"
+        )
       )
     )
   )
@@ -88,15 +91,15 @@ mod_andeler_ui <- function(id) {
 #' @return A Shiny app server object
 #' @export
 
-mod_andeler_server <- function(id, inputData) {
+mod_andeler_server <- function(id, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
       data_reactive <- shiny::reactive({
-        inputData$RegData
+        data
       })
       e_prom_reactive <- shiny::reactive({
-        inputData$promData
+        data |> dplyr::filter(.data$FormTypeId == 4)
       })
 
 
@@ -109,6 +112,9 @@ mod_andeler_server <- function(id, inputData) {
         } else {
           data <- as.data.frame(data_reactive())
         }
+        data <- data |>
+          dplyr::distinct(.data$PasientGUID, .data$HF, .keep_all = TRUE) |>
+          dplyr::filter(alive == TRUE)
 
         data <- filtrerDatoIntervall(
           data = data,
