@@ -8,7 +8,7 @@
 #' @export
 
 app_server <- function(input, output, session) {
-  rapbase::appLogger(session, msg = 'Starter Rapporteket-Parkinson')
+  rapbase::appLogger(session, msg = "Starter Rapporteket-Parkinson")
   # data.frame som mapper ReshID og sykehusnavn
   map_orgname <- data.frame(
     UnitId = c(111, 222, 333),
