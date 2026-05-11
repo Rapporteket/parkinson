@@ -4,7 +4,7 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(browser = FALSE, logAsJson = FALSE)
+run_app(browser = FALSE, logAsJson = TRUE)
 }
 \arguments{
 \item{browser}{Open app in browser window}

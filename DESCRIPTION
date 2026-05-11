@@ -32,7 +32,6 @@ Imports:
     plotly,
     rapbase (>= 3.6.0),
     rlang,
-    rpivotTable,
     scales,
     shiny,
     tidyr
