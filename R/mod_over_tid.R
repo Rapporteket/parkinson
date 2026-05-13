@@ -75,7 +75,7 @@ mod_over_tid_server <- function(id, data) {
         } else if (input$sorting == "Sykehus") {
           shiny::req(input$unit)
           data |>
-            dplyr::filter(.data$HealthUnitName == input$unit)
+            dplyr::filter(.data$HF == input$unit)
         } else if (input$sorting == "Region") {
           shiny::req(input$unit)
           data |>
@@ -117,7 +117,7 @@ mod_over_tid_server <- function(id, data) {
           return(NULL)
         }
         unitChoices <- switch(input$sorting,
-          "Sykehus" = sort(unique(data$HealthUnitName)),
+          "Sykehus" = sort(unique(data$HF)),
           "Region" = sort(unique(data$RHF))
         )
 

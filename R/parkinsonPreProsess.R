@@ -10,9 +10,16 @@
 #'
 
 
-parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
+parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRDataskjema) {
   RegData <- bakgrunnSkjema |>
-    dplyr::bind_rows(konsultasjonSkjema)
+    dplyr::bind_rows(konsultasjonSkjema) |>
+    dplyr::bind_rows(promData)
+    
+  
+  # Fjern pasienter som ikke har bakgrunnskjema
+  # Fjern pasienter med unitID == 0, 99999
+  # Fjern pasienter med ugyldig ICD_10
+
   #-----------------------------------------------#
   #              Regdata                          #
   #-----------------------------------------------#
@@ -30,8 +37,24 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
         to_date_ddmmyyyy8
       )
     )
-
+  RegData <- RegData |>
+    dplyr::mutate(HF = stringr::str_sub(.data$HF, end = -4)) |>
+    dplyr::mutate(HF = dplyr::if_else(is.na(.data$HF), .data$RHF, .data$HF))
   RegData$H_TO_DIAG <- tidsDiffDager(RegData$PS_HDATO, RegData$DIAG_DATO)
+
+
+   
+  NPRDataskjema_min <- NPRDataskjema |>
+    dplyr::filter(!is.na(.data$NPR_mottaksDato)) |>
+    dplyr::arrange(.data$PasientGUID, .data$NPR_mottaksDato) |>
+    dplyr::distinct(.data$PasientGUID, .keep_all = TRUE) |>
+    dplyr::select(
+      .data$PasientGUID,
+      mottaksDato = .data$NPR_mottaksDato
+    )
+
+  RegData <- RegData |>
+    dplyr::left_join(NPRDataskjema_min, by = "PasientGUID")
 
   # -------- Slutt Dato formatering -------------
 
@@ -43,7 +66,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
     dplyr::ungroup()
 
 
-  RegData <- RegData |>
+  RegData <- RegData |> #Grupper per pasient
     dplyr::mutate(
       deathAge = .data$PatientAge +
         base::floor(
@@ -54,7 +77,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
         )
     )
 
-  RegData <- RegData |>
+  RegData <- RegData |> #Grupper per pasient
     dplyr::mutate(
       updatedPatientAge = .data$PatientAge +
         base::floor(
@@ -72,7 +95,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
 
   # Mottatt standardisert kartlegging
   RegData <- RegData |>
-    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1) # må legge til MDS-UPDRS-III
+    dplyr::mutate(StandardisertKartlegging = .data$PS_HY != -1 | !is.na(.data$PS_MDSUPDRS_III))
 
   # Tatt bilde
   RegData <- RegData |>
@@ -93,12 +116,15 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
     dplyr::ungroup()
 
 
-  # Oppdatert behandling: Sjekker om LastUpdate er innenfor de siste 2 årene
+  # Oppdatert manuell registrering siste to år på bakgrunn og konsultasjon
+  # Per nå bare oppdatert status, ikke behandling
+  # Gjør kun for Konsultasjon og Bakgrunn -> gir oppdatert manuell registrering
   cutoff <- Sys.Date() - lubridate::years(2)
   oppdatertFlag <- RegData |>
+    dplyr::filter(.data$FormTypeId %in% c(1, 2)) |>
     dplyr::group_by(.data$PasientGUID) |>
     dplyr::summarise(
-      oppdatertBehandling = any(.data$LastUpdate >= cutoff, na.rm = TRUE),
+      oppdatertStatus = any(.data$LastUpdate >= cutoff, na.rm = TRUE),
       .groups = "drop"
     )
   RegData <- RegData |>
@@ -131,6 +157,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
         dplyr::coalesce(.data$PS_DUO, FALSE),
         NA
       ),
+      # Mottatt DBS kan utfylles via NPR-skjema, mapping kommer fra Johannes
       mottattDBS = dplyr::if_else(
         .data$ICD_10 == "G20" & .data$alive,
         dplyr::coalesce(.data$PS_DBS, FALSE),
@@ -228,12 +255,33 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
   RegData <- RegData |>
     dplyr::left_join(aktivFlags, by = "PasientGUID")
 
+  # Check NPR prosedyrer per patient and update aktivDBS if relevant procedure found
+  nprDBS <- NPRDataskjema |>
+  dplyr::filter(
+    dplyr::if_any(
+      dplyr::starts_with("NPR_Prosedyrer_"),
+      ~ . %in% c("AAFE60", "AAW01", "AAGT05", "AAG20")
+    )
+  ) |>
+  dplyr::distinct(.data$PasientGUID)
+
+  # Update aktivDBS to TRUE for patients with DBS procedure in NPR
+  RegData <- RegData |>
+    dplyr::mutate(
+      aktivDBS = dplyr::if_else(
+        .data$PasientGUID %in% nprDBS$PasientGUID,
+        TRUE,
+        .data$aktivDBS
+      )
+    )
+
   # Sett grenseverdier for kvalitetsindikatorer
   attr(RegData, "kvalIndGrenser") <- list(
     tattBilde = c(0, 75, 90, 100),
-    oppdatertBehandling = c(0, 75, 90, 100),
+    oppdatertStatus = c(0, 75, 90, 100),
     aktivAvansertBehandling = c(0, 5, 15, 100),
-    StandardisertKartlegging = c(0, 75, 90, 100)
+    StandardisertKartlegging = c(0, 75, 90, 100),
+    tilfredsSpesialist = c(0, 40, 60, 100)
   )
   #-------------------Slutt Kvalitetsindikatorer -------------------
 
@@ -241,21 +289,29 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData) {
   #----------------------------------------------#
   #             ePromSkjema                      #
   #----------------------------------------------#
-  promData <- promData |>
+  # Må nyanseres per pasient
+  # Se på siste svar fra hver pasient
+  tilfreds_df <- RegData |>
+    dplyr::filter(.data$FormTypeId == 4) |>
+    dplyr::group_by(.data$PasientGUID) |> # Group by PasientGUID
+    dplyr::filter(
+      .data$FormDate == max(.data$FormDate, na.rm = TRUE),
+    ) |>
     dplyr::mutate(
       tilfredsSpesialist = dplyr::if_else(
         .data$DHT_TILFREDS_SPESIALIST %in% 0:4,
         .data$DHT_TILFREDS_SPESIALIST %in% c(3, 4),
         NA
       )
-    )
-  attr(promData, "kvalIndGrenser") <- list(
-    tilfredsSpesialist = c(0, 40, 60, 100)
-  )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::select(.data$PasientGUID, .data$tilfredsSpesialist)
+
+    
+
+  RegData <- RegData |>
+    dplyr::left_join(tilfreds_df, by = "PasientGUID")
   #------------ Slutt ePromSkjema ---------------#
 
-  return(list(
-    RegData = RegData,
-    promData = promData
-  ))
+  return(RegData)
 }

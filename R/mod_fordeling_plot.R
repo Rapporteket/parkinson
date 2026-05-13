@@ -18,10 +18,10 @@ mod_fordeling_plot_ui <- function(id) {
             inputId = ns("x_var"),
             label = "Variabel:",
             choices = c(
-              "Sykehus" = "HealthUnitName",
+              "Sykehus" = "HF",
               "Region"  = "RHF"
             ),
-            selected = "HealthUnitName"
+            selected = "HF"
           ),
           shiny::sliderInput(
             inputId = ns("alder_var"),
@@ -104,15 +104,18 @@ mod_fordeling_plot_server <- function(id, data) {
       data_reactive <- shiny::reactive({
 
         if (input$tab == "AvansertBehandling") {
+          # Bruk HF i stedet for HF
           plotData <- data |>
-            dplyr::distinct(.data$PasientGUID, .data$HealthUnitName, .keep_all = TRUE) |>
-            dplyr::filter(!is.na(.data$HealthUnitName))
+            dplyr::distinct(.data$PasientGUID, .data$HF, .keep_all = TRUE) |>
+            dplyr::filter(!is.na(.data$HF))
           plotData <- plotData |>
             filtrerAlderIntervall(
               input$alder_var[1],
               input$alder_var[2]
             )
         } else if (input$tab == "Age") {
+          # Sørg for at pasienter inkluderes rett
+          # Bruk updatedPatientAge fra nyeste skjema per pasient
           plotData <- data |>
             dplyr::distinct(.data$PasientGUID, .keep_all = TRUE)
           shiny::req(input$diagnose_var, input$age_var)

@@ -88,6 +88,7 @@ PlotAndelerGrVar <- function(
     Ngr <- table(factor(character(0)))
     Nvar <- numeric(0)
   }
+
   # Andeler per gruppe (i %), og hvilke grupper som er under grense
   AndelerGr <- round(100 * Nvar / Ngr, 2)
 
@@ -239,6 +240,7 @@ PlotAndelerGrVar <- function(
         ggplot2::scale_fill_manual(
           name = "Kvalitetsnivå",
           values = kvalIndFarger,
+          limits = kvalIndLegend,
           drop = FALSE
         )
     }

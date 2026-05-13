@@ -28,14 +28,12 @@ info_server <- function(id, user, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-      promData <- data$promData
-      RegData <- data$RegData
 
       # Info
       output$info <- shiny::renderText({
-        nProm <- nrow(promData)
-        nBakgrunn <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 1))
-        nKonsultasjon <- nrow(RegData |> dplyr::filter(.data$FormTypeId == 2))
+        nProm <- nrow(data |> dplyr::filter(.data$FormTypeId == 4))
+        nBakgrunn <- nrow(data |> dplyr::filter(.data$FormTypeId == 1))
+        nKonsultasjon <- nrow(data |> dplyr::filter(.data$FormTypeId == 2))
         paste0(
           "<h3>Antall skjema</h3>",
           "<p>Oversikt over antall skjema som er registrert i systemet. ",
@@ -70,7 +68,7 @@ info_server <- function(id, user, data) {
 
       output$infoPlot <- plotly::renderPlotly({
         p <- makeMonthlyColPlot(
-          data = RegData,
+          data = data,
           dateCol = "FormDate",
           fillCol = "RHF",
           yearsBack = 1
