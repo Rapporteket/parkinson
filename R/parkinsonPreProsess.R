@@ -13,8 +13,8 @@
 parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRDataskjema) {
   RegData <- bakgrunnSkjema |>
     dplyr::bind_rows(konsultasjonSkjema) |>
-    dplyr::bind_rows(promData) |>
-    dplyr::bind_rows(NPRDataskjema)
+    dplyr::bind_rows(promData)
+    
   
   # Fjern pasienter som ikke har bakgrunnskjema
   # Fjern pasienter med unitID == 0, 99999
@@ -38,9 +38,28 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
       )
     )
   RegData <- RegData |>
-    dplyr::mutate(HF = stringr::str_sub(.data$HF, end = -4))
+    dplyr::mutate(HF = stringr::str_sub(.data$HF, end = -4)) |>
+    dplyr::mutate(HF = dplyr::if_else(is.na(.data$HF), .data$RHF, .data$HF))
   RegData$H_TO_DIAG <- tidsDiffDager(RegData$PS_HDATO, RegData$DIAG_DATO)
 
+
+   
+  NPRDataskjema_min <- NPRDataskjema |>
+    dplyr::filter(!is.na(.data$NPR_mottaksDato)) |>
+    dplyr::arrange(.data$PasientGUID, .data$NPR_mottaksDato) |>
+    dplyr::distinct(.data$PasientGUID, .keep_all = TRUE) |>
+    dplyr::select(
+      .data$PasientGUID,
+      mottaksDato = .data$NPR_mottaksDato
+    )
+
+  RegData <- RegData |>
+    dplyr::left_join(NPRDataskjema_min, by = "PasientGUID")
+  mangler <- RegData |>
+    dplyr::filter(is.na(.data$mottaksDato)) |>
+    dplyr::distinct(.data$PasientGUID)
+
+  print(mangler)
   # -------- Slutt Dato formatering -------------
 
   RegData$PatientGender <- factor(RegData$PatientGender, levels = c(0, 1, 2), labels = c("Ukjent", "Mann", "Kvinne"))
@@ -238,6 +257,26 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
 
   RegData <- RegData |>
     dplyr::left_join(aktivFlags, by = "PasientGUID")
+
+  # Check NPR prosedyrer per patient and update aktivDBS if relevant procedure found
+  nprDBS <- NPRDataskjema |>
+  dplyr::filter(
+    dplyr::if_any(
+      dplyr::starts_with("NPR_Prosedyrer_"),
+      ~ . %in% c("AAFE60", "AAW01", "AAGT05", "AAG20")
+    )
+  ) |>
+  dplyr::distinct(.data$PasientGUID)
+
+  # Update aktivDBS to TRUE for patients with DBS procedure in NPR
+  RegData <- RegData |>
+    dplyr::mutate(
+      aktivDBS = dplyr::if_else(
+        .data$PasientGUID %in% nprDBS$PasientGUID,
+        TRUE,
+        .data$aktivDBS
+      )
+    )
 
   # Sett grenseverdier for kvalitetsindikatorer
   attr(RegData, "kvalIndGrenser") <- list(
