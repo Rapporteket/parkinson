@@ -8,6 +8,7 @@
 #' @export
 
 app_server <- function(input, output, session) {
+  rapbase::appLogger(session, msg = "Starter Rapporteket-Parkinson")
   # data.frame som mapper ReshID og sykehusnavn
   map_orgname <- data.frame(
     UnitId = c(111, 222, 333),
@@ -24,7 +25,6 @@ app_server <- function(input, output, session) {
   RegData <- data$RegData
   info_server("info", user = user, data = data)
   samlerapport_server("samlerapport")
-  pivot_server(RegData, "pivot", user = user)
   mod_fordeling_plot_server("fordeling", data = RegData)
   mod_over_tid_server("over_tid", data = RegData)
   mod_andeler_server("andeler", inputData = data)

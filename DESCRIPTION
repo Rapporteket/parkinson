@@ -30,14 +30,13 @@ Imports:
     jsonlite,
     lubridate,
     plotly,
-    rapbase,
+    rapbase (>= 3.6.0),
     rlang,
-    rpivotTable,
     scales,
     shiny,
     tidyr
 Remotes:
-  Rapporteket/rapbase@main
+  Rapporteket/rapbase
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

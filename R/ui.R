@@ -8,9 +8,9 @@ app_ui <- function() {
 
   shiny::tagList(
     shiny::navbarPage(
-      title = rapbase::title(regTitle),
+      title = rapbase::regTitle(regTitle),
       windowTitle = regTitle,
-      theme = rapbase::theme(),
+      theme = rapbase::rapTheme(),
       id = "tabs",
       shiny::tabPanel(
         "Informasjon",
@@ -32,10 +32,6 @@ app_ui <- function() {
       shiny::tabPanel(
         "Samlerapport",
         samlerapport_ui("samlerapport")
-      ),
-      shiny::tabPanel(
-        "Pivot-tabell",
-        pivot_ui("pivot")
       ),
       shiny::tabPanel(
         shiny::span(
