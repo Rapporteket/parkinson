@@ -45,7 +45,16 @@ makeYearCountStackedPlot <- function(data, varChoice) {
   )
   title <- choices[[varChoice]]
 
-  tabellData <- lagSummaryTable(data, varChoice) |>
+  tabellData <- lagSummaryTable(data, varChoice)
+  if(nrow(tabellData) == 0) {
+    return(ggplot2::ggplot() +
+             ggplot2::labs(
+                title = "Ingen data tilgjengelig med denne filtreringen"
+              ) +
+              ggplot2::theme_void())
+  }
+
+  tabellData <- tabellData |>
     dplyr::filter(.data$gruppe != "alle") |>
     tidyr::pivot_longer(
       cols = -tidyselect::all_of("gruppe"),
