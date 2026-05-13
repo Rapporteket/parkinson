@@ -71,7 +71,7 @@ app_server <- function(input, output, session) {
   shiny::observeEvent(
     shiny::req(user$role()), {
       if (user$role() == "SC") {
-        if (!adminTabsAdded()){
+        if (!adminTabsAdded()) {
           message("Adding dispatchment tab for user with role ", user$role())
           message("Adding export tab for user with role ", user$role())
           shiny:: appendTab(
