@@ -34,6 +34,7 @@ app_ui <- function() {
         samlerapport_ui("samlerapport")
       ),
       shiny::tabPanel(
+        value = "abonnement",
         shiny::span(
           "Abonnement",
           title = "Bestill tilsending av rapporter p\u00e5 e-post"

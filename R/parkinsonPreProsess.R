@@ -55,11 +55,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
 
   RegData <- RegData |>
     dplyr::left_join(NPRDataskjema_min, by = "PasientGUID")
-  mangler <- RegData |>
-    dplyr::filter(is.na(.data$mottaksDato)) |>
-    dplyr::distinct(.data$PasientGUID)
 
-  print(mangler)
   # -------- Slutt Dato formatering -------------
 
   RegData$PatientGender <- factor(RegData$PatientGender, levels = c(0, 1, 2), labels = c("Ukjent", "Mann", "Kvinne"))

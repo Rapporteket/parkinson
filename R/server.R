@@ -92,7 +92,7 @@ app_server <- function(input, output, session) {
               )
             )
           ),
-          target = "Pivot-tabell",
+          target = "abonnement",
           position = "after"
         )
         message("Adding export tab for user with role ", user$role())
