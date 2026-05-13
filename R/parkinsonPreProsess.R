@@ -121,6 +121,7 @@ parkPreprosess <- function(bakgrunnSkjema, konsultasjonSkjema, promData, NPRData
   # Gjør kun for Konsultasjon og Bakgrunn -> gir oppdatert manuell registrering
   cutoff <- Sys.Date() - lubridate::years(2)
   oppdatertFlag <- RegData |>
+    dplyr::filter(.data$FormTypeId %in% c(1, 2)) |>
     dplyr::group_by(.data$PasientGUID) |>
     dplyr::summarise(
       oppdatertStatus = any(.data$LastUpdate >= cutoff, na.rm = TRUE),
